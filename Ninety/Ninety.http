@@ -1,0 +1,6 @@
+@Ninety_HostAddress = http://localhost:5090
+
+GET {{Ninety_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
