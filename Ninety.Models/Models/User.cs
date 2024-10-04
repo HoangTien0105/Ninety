@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ninety.Utils;
+using System;
 using System.Collections.Generic;
 
 namespace Ninety.Models.Models;
@@ -7,7 +8,7 @@ public partial class User
 {
     public int Id { get; set; }
 
-    public int Role { get; set; }
+    public Enums.Role Role { get; set; }
 
     public string Name { get; set; } = null!;
 
@@ -17,7 +18,7 @@ public partial class User
 
     public string PhoneNumber { get; set; } = null!;
 
-    public int Gender { get; set; }
+    public Enums.Gender Gender { get; set; }
 
     public DateTime? DateOfBirth { get; set; }
 

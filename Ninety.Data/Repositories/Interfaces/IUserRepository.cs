@@ -12,5 +12,9 @@ namespace Ninety.Data.Repositories.Interfaces
         Task<User> GetAccount(string email, string password);
         Task<List<User>> GetAll();
         Task<User> GetById(int id);
+        Task<User> GetByEmail(string email);
+        Task<User> GetByPhone(string phone);
+        Task<User> GetByName(string name);
+        Task<User> Add(User user);
     }
 }

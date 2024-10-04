@@ -59,5 +59,13 @@ namespace Ninety.Controllers
 
             return Task.FromResult<IActionResult>(Ok(new { message = "Logout successfully" }));
         }
+
+        [HttpPost("sign-up")]
+        public async Task<IActionResult> SignUp([FromBody] SignUpRequestDTO signUpRequest)
+        {
+            var result = await _userService.SignUp(signUpRequest);
+
+            return StatusCode(result.StatusCode, result);
+        }
     }
 }
