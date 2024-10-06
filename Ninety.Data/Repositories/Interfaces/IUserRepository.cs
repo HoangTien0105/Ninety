@@ -16,5 +16,6 @@ namespace Ninety.Data.Repositories.Interfaces
         Task<User> GetByPhone(string phone);
         Task<User> GetByName(string name);
         Task<User> Add(User user);
+        Task<User> Update(User user);   
     }
 }

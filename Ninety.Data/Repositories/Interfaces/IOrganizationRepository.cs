@@ -11,5 +11,7 @@ namespace Ninety.Data.Repositories.Interfaces
     {
         Task<List<Organization>> GetAll();
         Task<Organization> GetById(int id);
+        Task<Organization> GetByName(string name);
+        Task<Organization> Create(Organization organization);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ISO3166;
 using Ninety.Business.Services.Interfaces;
 using Ninety.Data.Repositories.Interfaces;
 using Ninety.Models.DTOs;
@@ -190,6 +191,89 @@ namespace Ninety.Business.Services
 
             return phoneRegex.IsMatch(phoneNumber);
         }
+        private bool IsValidCountry(string countryName)
+        {
+            var countries = Country.List;
+            return countries.Any(c => c.Name.Equals(countryName, StringComparison.OrdinalIgnoreCase));
+        }
 
+        public async Task<BaseResponse> UpdateProfile(UpdateProfileDTO updateProfileDTO)
+        {
+            var user = await _userRepository.GetById(updateProfileDTO.Id);
+            
+            if(user == null)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 404,
+                    Message = "User not found!!!",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            var phone = await _userRepository.GetByPhone(updateProfileDTO.PhoneNumber);
+
+            if(phone != null && phone.Id != updateProfileDTO.Id)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 501,
+                    Message = "This phone is already existed!!!",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            if(!IsValidCountry(updateProfileDTO.Nationality))
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 501,
+                    Message = "This country is not exist!!!",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            if(updateProfileDTO.DateOfBirth >= DateTime.UtcNow.AddHours(8))
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 501,
+                    Message = "This birthday is not exist!!!",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            if (!ValidatePassword(updateProfileDTO.Password))
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 500,
+                    Message = "Password must be at least 5 characters long, contain at least one uppercase letter and one number.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            user.Name = updateProfileDTO.Name;
+            user.Password = updateProfileDTO.Password;
+            user.PhoneNumber = updateProfileDTO.PhoneNumber;
+            user.DateOfBirth = updateProfileDTO.DateOfBirth;
+            user.Gender = Enum.Parse<Gender>(updateProfileDTO.Gender);
+            user.Nationality = updateProfileDTO.Nationality;
+
+            await _userRepository.Update(user);
+
+            return new BaseResponse
+            {
+                StatusCode = 200,
+                Message = "Update successfully",
+                IsSuccess = true,
+                Data = _mapper.Map<UserDTO>(user)
+            };
+        }
     }
 }
