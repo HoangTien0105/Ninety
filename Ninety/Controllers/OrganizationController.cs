@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Ninety.Business.Services;
 using Ninety.Business.Services.Interfaces;
+using Ninety.Models.DTOs.Request;
+using Ninety.Models.Models;
 
 namespace Ninety.Controllers
 {
@@ -35,6 +38,14 @@ namespace Ninety.Controllers
             var sports = await _organizationService.GetById(id);
 
             return StatusCode(sports.StatusCode, sports);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CreateOrganizations(CreateOrganizationsRequestDTO requestDTO)
+        {
+            var organ = await _organizationService.Create(requestDTO);
+            return StatusCode(organ.StatusCode, organ);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Ninety.Business.Services;
 using Ninety.Business.Services.Interfaces;
 
@@ -37,5 +38,12 @@ namespace Ninety.Controllers
 
             return StatusCode(sports.StatusCode, sports);
         }
+
+        //[HttpPost()]
+        //[Authorize]
+        //public async Task<IActionResult> CreateTeam(CreateTeamRequestDTO createTeamRequestDTO)
+        //{
+
+        //}
     }
 }

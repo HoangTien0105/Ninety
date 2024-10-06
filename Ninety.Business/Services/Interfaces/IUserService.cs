@@ -17,5 +17,6 @@ namespace Ninety.Business.Services.Interfaces
         Task<BaseResponse> GetById(int id);
         Task<UserDTO> CheckLogin(string email, string password);
         Task<BaseResponse> SignUp(SignUpRequestDTO signUpRequestDTO);
+        Task<BaseResponse> UpdateProfile(UpdateProfileDTO updateProfileDTO);
     }
 }

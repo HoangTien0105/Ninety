@@ -71,5 +71,29 @@ namespace Ninety.Data.Repositories
         {
             return await _context.Users.FirstOrDefaultAsync(e => e.Name == name);
         }
+
+        public async Task<User> Update(User user)
+        {
+            // Sử dụng Transaction để đảm bảo tính toàn vẹn dữ liệu
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync();
+
+                    // Commit transaction sau khi các thao tác đã thành công
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    // Rollback transaction nếu có lỗi
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
+
+            return user;
+        }
     }
 }
