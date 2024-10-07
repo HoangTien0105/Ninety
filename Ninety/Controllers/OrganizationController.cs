@@ -45,7 +45,7 @@ namespace Ninety.Controllers
         /// </summary>
         /// <param name="requestDTO"></param>
         /// <returns></returns>
-        [HttpPost("{id}")]
+        [HttpPost()]
         [Authorize]
         public async Task<IActionResult> CreateOrganizations(CreateOrganizationsRequestDTO requestDTO)
         {
