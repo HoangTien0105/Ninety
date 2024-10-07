@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Ninety.Business.Services;
 using Ninety.Business.Services.Interfaces;
+using Ninety.Models.DTOs.Request;
 
 namespace Ninety.Controllers
 {
@@ -39,11 +40,17 @@ namespace Ninety.Controllers
             return StatusCode(sports.StatusCode, sports);
         }
 
-        //[HttpPost()]
-        //[Authorize]
-        //public async Task<IActionResult> CreateTeam(CreateTeamRequestDTO createTeamRequestDTO)
-        //{
-
-        //}
+        /// <summary>
+        /// Create team
+        /// </summary>
+        /// <param name="createTeamRequestDTO"></param>
+        /// <returns></returns>
+        [HttpPost()]
+        [Authorize]
+        public async Task<IActionResult> CreateTeam(CreateTeamRequestDTO createTeamRequestDTO)
+        {
+            var organ = await _teamService.Create(createTeamRequestDTO);
+            return StatusCode(organ.StatusCode, organ);
+        }
     }
 }

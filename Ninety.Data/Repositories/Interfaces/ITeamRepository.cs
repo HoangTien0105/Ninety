@@ -11,5 +11,7 @@ namespace Ninety.Data.Repositories.Interfaces
     {
         Task<List<Team>> GetAll();
         Task<Team> GetById(int id);
+        Task<Team> Create(Team team);   
+        Task<Team> CreateWithTeamDetails(Team team, TeamDetail teamDetail);   
     }
 }
