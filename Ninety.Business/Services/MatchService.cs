@@ -19,16 +19,19 @@ namespace Ninety.Business.Services
         private readonly IMatchRepository _matchRepository;
         private readonly ITournamentRepository _tournamentRepository;
         private readonly ITeamRepository _teamRepository;
+        private readonly IBadmintonMatchDetailRepository _badmintonMatchDetailRepository;
         private readonly IMapper _mapper;
 
         public MatchService(IMatchRepository matchRepository,
                             ITournamentRepository tournamentRepository,
                             ITeamRepository teamRepository,
+                            IBadmintonMatchDetailRepository badmintonMatchDetailRepository,
                             IMapper mapper)
         {
             _matchRepository = matchRepository;
             _tournamentRepository = tournamentRepository;
             _teamRepository = teamRepository;
+            _badmintonMatchDetailRepository = badmintonMatchDetailRepository;
             _mapper = mapper;
         }
 
@@ -94,6 +97,17 @@ namespace Ninety.Business.Services
             };
 
             await _matchRepository.Create(match);
+
+            BadmintonMatchDetail badmintonMatchDetail = new BadmintonMatchDetail
+            {
+                ApointSet1 = 0,
+                BpointSet1 = 0,
+                ApointSet2 = 0,
+                BpointSet2 = 0,
+                MatchId = match.Id
+            };
+
+            await _badmintonMatchDetailRepository.Create(badmintonMatchDetail);
 
             return new BaseResponse
             {

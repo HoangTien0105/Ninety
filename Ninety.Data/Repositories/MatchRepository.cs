@@ -50,5 +50,32 @@ namespace Ninety.Data.Repositories
         {
             return await _context.Matchs.FirstOrDefaultAsync(e => e.Id == id);
         }
+
+        public async Task<Match> Update(Match match)
+        {
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // Gán bản ghi cần cập nhật vào trạng thái Modified
+                    _context.Matchs.Update(match);
+
+                    // Lưu thay đổi vào cơ sở dữ liệu
+                    await _context.SaveChangesAsync();
+
+                    // Commit transaction sau khi các thao tác đã thành công
+                    await transaction.CommitAsync();
+
+                    // Trả về đối tượng đã được cập nhật
+                    return match;
+                }
+                catch (Exception)
+                {
+                    // Rollback transaction nếu có lỗi
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
+        }
     }
 }

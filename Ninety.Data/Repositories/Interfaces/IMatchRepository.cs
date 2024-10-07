@@ -12,5 +12,6 @@ namespace Ninety.Data.Repositories.Interfaces
         Task<List<Match>> GetAll();
         Task<Match> GetById(int id);
         Task<Match> Create(Match match);
+        Task<Match> Update(Match match);
     }
 }
