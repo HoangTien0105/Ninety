@@ -11,5 +11,7 @@ namespace Ninety.Data.Repositories.Interfaces
     {
         Task<List<BadmintonMatchDetail>> GetAll();
         Task<BadmintonMatchDetail> GetById(int id);
+        Task<BadmintonMatchDetail> Create(BadmintonMatchDetail badmintonMatchDetail);
+        Task<BadmintonMatchDetail> Update(BadmintonMatchDetail badmintonMatchDetail);
     }
 }
