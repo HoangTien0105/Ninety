@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Ninety.Business.Services;
 using Ninety.Business.Services.Interfaces;
+using Ninety.Models.DTOs.Request;
 
 namespace Ninety.Controllers
 {
@@ -35,6 +38,19 @@ namespace Ninety.Controllers
             var tournaments = await _tournamentService.GetById(id);
 
             return StatusCode(tournaments.StatusCode, tournaments);
+        }
+
+        /// <summary>
+        /// Create tournaments
+        /// </summary>
+        /// <param name="requestDTO"></param>
+        /// <returns></returns>
+        [HttpPost()]
+        [Authorize]
+        public async Task<IActionResult> CreateTournaments(CreateTournamentRequestDTO requestDTO)
+        {
+            var organ = await _tournamentService.Create(requestDTO);
+            return StatusCode(organ.StatusCode, organ);
         }
     }
 }

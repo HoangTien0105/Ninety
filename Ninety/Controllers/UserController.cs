@@ -56,7 +56,7 @@ namespace Ninety.Controllers
         /// </summary>
         /// <param name="updateProfileDTO"></param>
         /// <returns></returns>
-        [HttpPut()]
+        [HttpPut("{id}")]
         [Authorize]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDTO updateProfileDTO)
         {

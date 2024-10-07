@@ -1,4 +1,5 @@
-﻿using Ninety.Models.DTOs.Response;
+﻿using Ninety.Models.DTOs.Request;
+using Ninety.Models.DTOs.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,6 @@ namespace Ninety.Business.Services.Interfaces
         Task<BaseResponse> GetAll();
 
         Task<BaseResponse> GetById(int id);
+        Task<BaseResponse> Create(CreateTournamentRequestDTO requestDTO);
     }
 }
