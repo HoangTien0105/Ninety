@@ -17,6 +17,30 @@ namespace Ninety.Data.Repositories
         {
             _context = context;
         }
+
+        public async Task<Match> Create(Match match)
+        {
+            // Sử dụng Transaction để đảm bảo tính toàn vẹn dữ liệu
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    await _context.Matchs.AddAsync(match);
+                    await _context.SaveChangesAsync();
+
+                    // Commit transaction sau khi các thao tác đã thành công
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    // Rollback transaction nếu có lỗi
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
+            return match;
+        }
+
         public async Task<List<Match>> GetAll()
         {
             return await _context.Matchs.ToListAsync();
