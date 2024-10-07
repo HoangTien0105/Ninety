@@ -128,5 +128,70 @@ namespace Ninety.Business.Services
                 };
             }
         }
+
+        public async Task<BaseResponse> Register(int teamId, int userId)
+        {
+            var user = await _userRepository.GetById(userId);
+
+            if (user == null)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 404,
+                    Message = "User not found",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            var team = await _teamRepository.GetById(teamId);
+
+            if (team == null)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 404,
+                    Message = "Team not found",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            var existingTeamDetailEntity = await _teamDetailsRepository.GetAll();
+
+            var allTeams = await _teamRepository.GetAll();
+
+            bool isUserInAnotherTeam = existingTeamDetailEntity
+                   .Where(td => td.UserId == userId)
+                   .Any(td => allTeams
+                   .Any(t => t.Id == td.TeamId && t.TournamentId == team.TournamentId && t.Id != teamId));
+
+            if (isUserInAnotherTeam)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 400,
+                    Message = "User is already registered in another team for this tournament",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            TeamDetail teamDetail = new TeamDetail
+            {
+                TeamId = teamId,
+                UserId = userId
+            };
+
+            await _teamDetailsRepository.Create(teamDetail);
+
+            return new BaseResponse
+            {
+                StatusCode = 200,
+                Message = "Register successfully!!!",
+                IsSuccess = true,
+                Data = null
+            };
+        }
     }
 }
