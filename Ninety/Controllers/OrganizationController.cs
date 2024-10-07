@@ -40,7 +40,12 @@ namespace Ninety.Controllers
             return StatusCode(sports.StatusCode, sports);
         }
 
-        [HttpPost]
+        /// <summary>
+        /// Create organization
+        /// </summary>
+        /// <param name="requestDTO"></param>
+        /// <returns></returns>
+        [HttpPost("{id}")]
         [Authorize]
         public async Task<IActionResult> CreateOrganizations(CreateOrganizationsRequestDTO requestDTO)
         {
