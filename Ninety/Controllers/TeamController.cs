@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Ninety.Business.Services;
 using Ninety.Business.Services.Interfaces;
+using Ninety.Models.DTOs.Request;
 
 namespace Ninety.Controllers
 {
@@ -19,9 +20,11 @@ namespace Ninety.Controllers
             _teamService = teamService;
         }
 
+        /// <summary>
+        /// Get all team
+        /// </summary>
+        /// <returns></returns>
         [HttpGet()]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetAllMatch()
         {
             var sports = await _teamService.GetAll();
@@ -29,9 +32,12 @@ namespace Ninety.Controllers
             return StatusCode(sports.StatusCode, sports);
         }
 
+        /// <summary>
+        /// Get team by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(int id)
         {
             var sports = await _teamService.GetById(id);
@@ -39,11 +45,31 @@ namespace Ninety.Controllers
             return StatusCode(sports.StatusCode, sports);
         }
 
-        //[HttpPost()]
-        //[Authorize]
-        //public async Task<IActionResult> CreateTeam(CreateTeamRequestDTO createTeamRequestDTO)
-        //{
+        /// <summary>
+        /// Create team
+        /// </summary>
+        /// <param name="createTeamRequestDTO"></param>
+        /// <returns></returns>
+        [HttpPost()]
+        [Authorize]
+        public async Task<IActionResult> CreateTeam(CreateTeamRequestDTO createTeamRequestDTO)
+        {
+            var organ = await _teamService.Create(createTeamRequestDTO);
+            return StatusCode(organ.StatusCode, organ);
+        }
 
-        //}
+        /// <summary>
+        /// Register API
+        /// </summary>
+        /// <param name="teamId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpPost("teamDetails")]
+        [Authorize]
+        public async Task<IActionResult> RegisterTeam(int teamId, int userId)
+        {
+            var organ = await _teamService.Register(teamId, userId);
+            return StatusCode(organ.StatusCode, organ);
+        }
     }
 }

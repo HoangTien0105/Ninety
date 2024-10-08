@@ -21,5 +21,6 @@ namespace Ninety.Utils
             Host,
             Staff
         }
+
     }
 }

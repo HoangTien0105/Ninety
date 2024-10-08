@@ -9,23 +9,22 @@ using System.Threading.Tasks;
 
 namespace Ninety.Data.Repositories
 {
-    public class TournamentRepository : ITournamentRepository
+    public class TeamDetailRepository : ITeamDetailsRepository
     {
         private readonly NinetyContext _context;
 
-        public TournamentRepository(NinetyContext context)
+        public TeamDetailRepository(NinetyContext context)
         {
             _context = context;
         }
-
-        public async Task<Tournament> Create(Tournament tournament)
+        public async Task<TeamDetail> Create(TeamDetail team)
         {
             // Sử dụng Transaction để đảm bảo tính toàn vẹn dữ liệu
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    await _context.Tournaments.AddAsync(tournament);
+                    await _context.TeamDetails.AddAsync(team);
                     await _context.SaveChangesAsync();
 
                     // Commit transaction sau khi các thao tác đã thành công
@@ -39,17 +38,17 @@ namespace Ninety.Data.Repositories
                 }
             }
 
-            return tournament;
+            return team;
         }
 
-        public async Task<List<Tournament>> GetAll()
+        public async Task<List<TeamDetail>> GetAll()
         {
-            return await _context.Tournaments.ToListAsync();
+            return await _context.TeamDetails.ToListAsync();
         }
 
-        public async Task<Tournament> GetById(int id)
+        public async Task<TeamDetail> GetById(int id)
         {
-            return await _context.Tournaments.FirstOrDefaultAsync(e => e.Id == id);
+            return await _context.TeamDetails.FirstOrDefaultAsync(e => e.Id == id);
         }
     }
 }

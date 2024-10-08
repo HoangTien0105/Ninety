@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Ninety.Data.Repositories.Interfaces
 {
-    public interface ITournamentRepository
+    public interface ITeamDetailsRepository
     {
-        Task<List<Tournament>> GetAll();
-        Task<Tournament> GetById(int id);
-        Task<Tournament> Create(Tournament tournament);
+        Task<List<TeamDetail>> GetAll();
+        Task<TeamDetail> GetById(int id);
+        Task<TeamDetail> Create(TeamDetail team);
     }
 }
