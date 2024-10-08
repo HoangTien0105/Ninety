@@ -51,7 +51,6 @@ namespace Ninety.Controllers
         /// <param name="createTeamRequestDTO"></param>
         /// <returns></returns>
         [HttpPost()]
-        [Authorize]
         public async Task<IActionResult> CreateTeam(CreateTeamRequestDTO createTeamRequestDTO)
         {
             var organ = await _teamService.Create(createTeamRequestDTO);
@@ -65,7 +64,6 @@ namespace Ninety.Controllers
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpPost("teamDetails")]
-        [Authorize]
         public async Task<IActionResult> RegisterTeam(int teamId, int userId)
         {
             var organ = await _teamService.Register(teamId, userId);

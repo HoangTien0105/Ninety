@@ -56,8 +56,7 @@ namespace Ninety.Controllers
         /// </summary>
         /// <param name="updateProfileDTO"></param>
         /// <returns></returns>
-        [HttpPut("{id}")]
-        [Authorize]
+        [HttpPut("{id}")] 
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDTO updateProfileDTO)
         {
             var user = await _userService.UpdateProfile(updateProfileDTO);

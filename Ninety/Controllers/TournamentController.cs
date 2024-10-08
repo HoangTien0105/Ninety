@@ -46,7 +46,6 @@ namespace Ninety.Controllers
         /// <param name="requestDTO"></param>
         /// <returns></returns>
         [HttpPost()]
-        [Authorize]
         public async Task<IActionResult> CreateTournaments(CreateTournamentRequestDTO requestDTO)
         {
             var organ = await _tournamentService.Create(requestDTO);
