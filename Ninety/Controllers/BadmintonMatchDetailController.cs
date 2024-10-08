@@ -61,7 +61,6 @@ namespace Ninety.Controllers
         //}
 
         [HttpPut("id")]
-        [Authorize]
         public async Task<IActionResult> UpdateScore(int id, UpddateBadmintonScoreDTO upddateBadmintonScoreDTO)
         {
             var sports = await _badmintonMatchDetailService.UpdateScore(id, upddateBadmintonScoreDTO);
