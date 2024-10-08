@@ -52,7 +52,6 @@ namespace Ninety.Controllers
         /// <param name="createMatchDTO"></param>
         /// <returns></returns>
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> CreateMatch(CreateMatchDTO createMatchDTO)
         {
             var sports = await _matchService.Create(createMatchDTO);
