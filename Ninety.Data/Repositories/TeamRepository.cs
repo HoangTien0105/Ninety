@@ -1,11 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Ninety.Data.Repositories.Interfaces;
 using Ninety.Models.Models;
+using Ninety.Models.PSSModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq.Dynamic.Core;
 
 namespace Ninety.Data.Repositories
 {
@@ -75,6 +78,65 @@ namespace Ninety.Data.Repositories
         public async Task<Team> GetById(int id)
         {
             return await _context.Teams.FirstOrDefaultAsync(e => e.Id == id);
+        }
+
+        public async Task<PagedList<Team>> GetListTeam(TeamParameters teamParameters)
+        {
+            var query = _context.Teams.AsNoTracking();
+            SearchByName(ref query, teamParameters.Name);
+            ApplySort(ref query, teamParameters.OrderBy);
+            return await PagedList<Team>.ToPagedList(query,
+                teamParameters.PageNumber,
+                teamParameters.PageSize);
+        }
+
+        private void SearchByName(ref IQueryable<Team> teams, string teamName)
+        {
+            if (!teams.Any() || string.IsNullOrWhiteSpace(teamName))
+                return;
+            teams = teams.Where(o => o.Name.ToLower().Contains(teamName.Trim().ToLower()));
+        }
+
+        private void ApplySort(ref IQueryable<Team> teams, string orderByQueryString)
+        {
+            if (!teams.Any())
+                return;
+
+            if (string.IsNullOrWhiteSpace(orderByQueryString))
+            {
+                teams = teams.OrderBy(x => x.Name);
+                return;
+            }
+
+            var orderParams = orderByQueryString.Trim().Split(',');
+            var propertyInfos = typeof(Team).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var orderQueryBuilder = new StringBuilder();
+
+            foreach (var param in orderParams)
+            {
+                if (string.IsNullOrWhiteSpace(param))
+                    continue;
+
+                var propertyFromQueryName = param.Split(" ")[0];
+                var objectProperty = propertyInfos.FirstOrDefault(pi => pi.Name.Equals(propertyFromQueryName, StringComparison.InvariantCultureIgnoreCase));
+
+                if (objectProperty == null)
+                    continue;
+
+                var sortingOrder = param.EndsWith(" desc") ? "descending" : "ascending";
+
+                orderQueryBuilder.Append($"{objectProperty.Name.ToString()} {sortingOrder}, ");
+            }
+
+            var orderQuery = orderQueryBuilder.ToString().TrimEnd(',', ' ');
+
+            if (string.IsNullOrWhiteSpace(orderQuery))
+            {
+                teams = teams.OrderBy(x => x.Name);
+                return;
+            }
+
+            teams = teams.OrderBy(orderQuery);
         }
     }
 }

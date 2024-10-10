@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Ninety.Models.DTOs;
 using Ninety.Models.Models;
+using Ninety.Models.PSSModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +34,19 @@ namespace Ninety.Business.Mapping
             CreateMap<Team, TeamDTO>().ReverseMap();
 
             CreateMap<BadmintonMatchDetail, BadmintonMatchDetailDTO>().ReverseMap();
+
+            CreateMap(typeof(PagedList<>), typeof(PagedList<>))
+            .ConvertUsing(typeof(PagedListConverter<,>));
+        }
+    }
+
+    public class PagedListConverter<TSource, TDestination> : ITypeConverter<PagedList<TSource>, PagedList<TDestination>>
+    {
+        public PagedList<TDestination> Convert(PagedList<TSource> source, PagedList<TDestination> destination, ResolutionContext context)
+        {
+            var mappedItems = context.Mapper.Map<List<TDestination>>(source);
+
+            return new PagedList<TDestination>(mappedItems, source.TotalCount, source.CurrentPage, source.PageSize);
         }
     }
 }

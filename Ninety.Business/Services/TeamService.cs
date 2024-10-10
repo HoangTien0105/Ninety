@@ -6,6 +6,7 @@ using Ninety.Models.DTOs;
 using Ninety.Models.DTOs.Request;
 using Ninety.Models.DTOs.Response;
 using Ninety.Models.Models;
+using Ninety.Models.PSSModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -100,6 +101,21 @@ namespace Ninety.Business.Services
                 Message = "",
                 IsSuccess = true,
                 Data = _mapper.Map<List<TeamDTO>>(sports)
+            };
+        }
+
+        public async Task<BaseResponse> GetListTeam(TeamParameters teamParameters)
+        {
+            var teams = await _teamRepository.GetListTeam(teamParameters);
+            //var response = _mapper.Map<PagedList<TeamDTO>>(teams);
+            //return new PagedList<TeamDTO>(response, teams.TotalCount, teams.CurrentPage, teams.PageSize);
+
+            return new BaseResponse
+            {
+                StatusCode = 200,
+                Message = "",
+                IsSuccess = true,
+                Data = _mapper.Map<List<TeamDTO>>(teams)
             };
         }
 
