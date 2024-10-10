@@ -1,4 +1,5 @@
 ﻿using Ninety.Models.Models;
+using Ninety.Models.PSSModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace Ninety.Data.Repositories.Interfaces
         Task<List<Team>> GetAll();
         Task<Team> GetById(int id);
         Task<Team> Create(Team team);   
-        Task<Team> CreateWithTeamDetails(Team team, TeamDetail teamDetail);   
+        Task<Team> CreateWithTeamDetails(Team team, TeamDetail teamDetail);
+        Task<PagedList<Team>> GetListTeam(TeamParameters teamParameters);
     }
 }

@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Ninety.Business.Services;
 using Ninety.Business.Services.Interfaces;
 using Ninety.Models.DTOs.Request;
+using Ninety.Models.PSSModels;
 
 namespace Ninety.Controllers
 {
@@ -20,10 +23,6 @@ namespace Ninety.Controllers
             _teamService = teamService;
         }
 
-        /// <summary>
-        /// Get all team
-        /// </summary>
-        /// <returns></returns>
         [HttpGet()]
         public async Task<IActionResult> GetAllMatch()
         {
@@ -32,11 +31,23 @@ namespace Ninety.Controllers
             return StatusCode(sports.StatusCode, sports);
         }
 
-        /// <summary>
-        /// Get team by id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        [HttpGet("all")]
+        public async Task<IActionResult> GetListTeam([FromQuery] TeamParameters teamParameters)
+        {
+            var teams = await _teamService.GetListTeam(teamParameters);
+            var metadata = new
+            {
+                teams.TotalCount,
+                teams.PageSize,
+                teams.CurrentPage,
+                teams.TotalPages,
+                teams.HasNext,
+                teams.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            return Ok(teams);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {

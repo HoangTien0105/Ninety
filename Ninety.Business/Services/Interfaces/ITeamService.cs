@@ -1,5 +1,7 @@
-﻿using Ninety.Models.DTOs.Request;
+﻿using Ninety.Models.DTOs;
+using Ninety.Models.DTOs.Request;
 using Ninety.Models.DTOs.Response;
+using Ninety.Models.PSSModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +17,6 @@ namespace Ninety.Business.Services.Interfaces
         Task<BaseResponse> GetById(int id);
         Task<BaseResponse> Create(CreateTeamRequestDTO requestDTO);
         Task<BaseResponse> Register(int teamId, int userId);
+        Task<BaseResponse> GetListTeam(TeamParameters teamParameters);
     }
 }
