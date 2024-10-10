@@ -107,15 +107,17 @@ namespace Ninety.Business.Services
         public async Task<BaseResponse> GetListTeam(TeamParameters teamParameters)
         {
             var teams = await _teamRepository.GetListTeam(teamParameters);
-            //var response = _mapper.Map<PagedList<TeamDTO>>(teams);
-            //return new PagedList<TeamDTO>(response, teams.TotalCount, teams.CurrentPage, teams.PageSize);
 
             return new BaseResponse
             {
                 StatusCode = 200,
                 Message = "",
                 IsSuccess = true,
-                Data = _mapper.Map<List<TeamDTO>>(teams)
+                Data = _mapper.Map<List<TeamDTO>>(teams),
+                CurrentPage = teams.CurrentPage,
+                TotalPages = teams.TotalPages,
+                PageSize = teams.PageSize,
+                TotalCount = teams.TotalCount
             };
         }
 
