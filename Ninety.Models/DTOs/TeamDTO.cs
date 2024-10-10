@@ -15,5 +15,7 @@ namespace Ninety.Models.DTOs
         public string? Description { get; set; }
 
         public int TournamentId { get; set; }
+
+        public TournamentDTO Tournament { get; set; }
     }
 }
