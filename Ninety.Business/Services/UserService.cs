@@ -143,6 +143,7 @@ namespace Ninety.Business.Services
                 Name = signUpRequestDTO.Name,
                 Password = signUpRequestDTO.Password,
                 Gender = Enums.Gender.Others,
+                UserStatus = Enums.UserStatus.Normal,
                 Nationality = "Others"
             };
 
@@ -273,6 +274,44 @@ namespace Ninety.Business.Services
                 Message = "Update successfully",
                 IsSuccess = true,
                 Data = _mapper.Map<UserDTO>(user)
+            };
+        }
+
+        public async Task<BaseResponse> UpdateUserStatus(int id, string status)
+        {
+            var userExist = await _userRepository.GetById(id);
+            if(userExist == null || userExist.Role == Enums.Role.Staff)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 400,
+                    Message = "User not found",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            if (!Enum.TryParse<UserStatus>(status, true, out var parsedStatus) ||
+                !Enum.IsDefined(typeof(UserStatus), parsedStatus))
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 400,
+                    Message = "Invalid status. Status must be either 'Normal' or 'VIP'.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            userExist.UserStatus = parsedStatus; 
+            await _userRepository.Update(userExist);
+
+            return new BaseResponse
+            {
+                StatusCode = 200,
+                Message = "User status updated successfully.",
+                IsSuccess = true,
+                Data = null
             };
         }
     }
