@@ -6,6 +6,7 @@ using Ninety.Models.DTOs;
 using Ninety.Models.DTOs.Request;
 using Ninety.Models.DTOs.Response;
 using Ninety.Models.Models;
+using Ninety.Models.PSSModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,6 +86,23 @@ namespace Ninety.Business.Services
                 Message = "",
                 IsSuccess = true,
                 Data = _mapper.Map<List<OrganizationDTO>>(matches)
+            };
+        }
+
+        public async Task<BaseResponse> GetOrganizationList(OrganizationParameter organizationParameter)
+        {
+            var organizations = await _organizationRepository.GetAllOrganazition(organizationParameter);
+
+            return new BaseResponse
+            {
+                StatusCode = 200,
+                Message = "",
+                IsSuccess = true,
+                Data = _mapper.Map<List<OrganizationDTO>>(organizations),
+                CurrentPage = organizations.CurrentPage,
+                TotalPages = organizations.TotalPages,
+                PageSize = organizations.PageSize,
+                TotalCount = organizations.TotalCount
             };
         }
 

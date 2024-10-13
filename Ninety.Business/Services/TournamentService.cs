@@ -6,6 +6,7 @@ using Ninety.Models.DTOs;
 using Ninety.Models.DTOs.Request;
 using Ninety.Models.DTOs.Response;
 using Ninety.Models.Models;
+using Ninety.Models.PSSModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -161,6 +162,23 @@ namespace Ninety.Business.Services
                 Data = _mapper.Map<TournamentDTO>(tournament)
             };
 
+        }
+
+        public async Task<BaseResponse> GetListTournament(TournamentParameter tournamentParameter)
+        {
+            var teams = await _tournamentRepository.GetAllOrganazition(tournamentParameter);
+
+            return new BaseResponse
+            {
+                StatusCode = 200,
+                Message = "",
+                IsSuccess = true,
+                Data = _mapper.Map<List<TournamentDTO>>(teams),
+                CurrentPage = teams.CurrentPage,
+                TotalPages = teams.TotalPages,
+                PageSize = teams.PageSize,
+                TotalCount = teams.TotalCount
+            };
         }
 
         public async Task<BaseResponse> GetAll()

@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Ninety.Business.Services;
 using Ninety.Business.Services.Interfaces;
 using Ninety.Models.DTOs.Request;
+using Ninety.Models.PSSModels;
 
 namespace Ninety.Controllers
 {
@@ -50,6 +52,23 @@ namespace Ninety.Controllers
         {
             var organ = await _tournamentService.Create(requestDTO);
             return StatusCode(organ.StatusCode, organ);
+        }
+
+        [HttpGet("all")]
+        public async Task<IActionResult> GetTournamentList([FromQuery] TournamentParameter tournamentParameter)
+        {
+            var teams = await _tournamentService.GetListTournament(tournamentParameter);
+            var metadata = new
+            {
+                teams.TotalCount,
+                teams.PageSize,
+                teams.CurrentPage,
+                teams.TotalPages,
+                teams.HasNext,
+                teams.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            return Ok(teams);
         }
     }
 }
