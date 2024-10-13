@@ -1,4 +1,5 @@
 ﻿using Ninety.Models.Models;
+using Ninety.Models.PSSModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,6 @@ namespace Ninety.Data.Repositories.Interfaces
         Task<List<Tournament>> GetAll();
         Task<Tournament> GetById(int id);
         Task<Tournament> Create(Tournament tournament);
+        Task<PagedList<Tournament>> GetAllOrganazition(TournamentParameter tournamentParameter);
     }
 }

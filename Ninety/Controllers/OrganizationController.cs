@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Ninety.Business.Services;
 using Ninety.Business.Services.Interfaces;
 using Ninety.Models.DTOs.Request;
 using Ninety.Models.Models;
+using Ninety.Models.PSSModels;
 
 namespace Ninety.Controllers
 {
@@ -28,6 +30,23 @@ namespace Ninety.Controllers
             var sports = await _organizationService.GetAll();
 
             return StatusCode(sports.StatusCode, sports);
+        }
+
+        [HttpGet("all")]
+        public async Task<IActionResult> GetOrganizationList([FromQuery] OrganizationParameter organizationParameter)
+        {
+            var teams = await _organizationService.GetOrganizationList(organizationParameter);
+            var metadata = new
+            {
+                teams.TotalCount,
+                teams.PageSize,
+                teams.CurrentPage,
+                teams.TotalPages,
+                teams.HasNext,
+                teams.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+            return Ok(teams);
         }
 
         [HttpGet("{id}")]
