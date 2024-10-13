@@ -17,6 +17,8 @@ public partial class Tournament
 
     public int NumOfParticipants { get; set; }
 
+    public int? SlotLeft { get; set; }
+
     public DateTime StartDate { get; set; }
 
     public DateTime EndDate { get; set; }

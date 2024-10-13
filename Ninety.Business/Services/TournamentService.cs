@@ -20,22 +20,35 @@ namespace Ninety.Business.Services
 
         private readonly ITournamentRepository _tournamentRepository;
         private readonly ISportRepository _sportRepository;
-        private readonly IUserRepository _organizationRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
         public TournamentService(ITournamentRepository tournamentRepository,
                                  ISportRepository sportRepository,
-                                 IUserRepository organizationRepository,
+                                 IUserRepository userRepository,
                                  IMapper mapper)
         {
             _tournamentRepository = tournamentRepository;
             _sportRepository = sportRepository;
-            _organizationRepository = organizationRepository;
+            _userRepository = userRepository;
             _mapper = mapper;
         }
 
         public async Task<BaseResponse> Create(CreateTournamentRequestDTO requestDTO)
         {
+
+            var userExist = await _userRepository.GetById(requestDTO.UserId);
+            if (userExist == null)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 404,
+                    Message = "User not found.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
             if (string.IsNullOrWhiteSpace(requestDTO.Name))
             {
                 return new BaseResponse
@@ -56,6 +69,59 @@ namespace Ninety.Business.Services
                     IsSuccess = false,
                     Data = null
                 };
+            }
+
+            var allowedFormats = new List<string> { "knockout", "league" };
+            if (!allowedFormats.Contains(requestDTO.Format.ToLower()))
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 400,
+                    Message = "Invalid tournament format. Format must be either 'knockout' or 'league'.",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            bool isVip = userExist.UserStatus == Utils.Enums.UserStatus.VIP;
+
+            if (requestDTO.Format.ToLower() == "knockout")
+            {
+                int maxParticipants = isVip ? 48 : 16; 
+                if (requestDTO.NumOfParticipants > maxParticipants)
+                {
+                    return new BaseResponse
+                    {
+                        StatusCode = 400,
+                        Message = $"Number of participants for knockout cannot exceed {maxParticipants} participants.",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                }
+            }
+            else if (requestDTO.Format.ToLower() == "league")
+            {
+                if (!isVip)
+                {
+                    return new BaseResponse
+                    {
+                        StatusCode = 400,
+                        Message = "Only VIP users can choose league format.",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                }
+
+                if (requestDTO.NumOfParticipants > 10)
+                {
+                    return new BaseResponse
+                    {
+                        StatusCode = 400,
+                        Message = "Number of participants for league cannot exceed 10 participants.",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                }
             }
 
             if (requestDTO.NumOfParticipants <= 0)
@@ -125,18 +191,6 @@ namespace Ninety.Business.Services
                 };
             }
 
-            var organExist = await _organizationRepository.GetById(requestDTO.UserId);
-            if (organExist == null)
-            {
-                return new BaseResponse
-                {
-                    StatusCode = 404,
-                    Message = "Organization not found.",
-                    IsSuccess = false,
-                    Data = null
-                };
-            }
-
             Tournament tournament = new Tournament
             {
                 Name = requestDTO.Name,
@@ -144,6 +198,7 @@ namespace Ninety.Business.Services
                 Rules = requestDTO.Rules,
                 Format = requestDTO.Format,
                 NumOfParticipants = requestDTO.NumOfParticipants,
+                SlotLeft = requestDTO.NumOfParticipants,
                 StartDate = requestDTO.StartDate,
                 EndDate = requestDTO.EndDate,
                 Fee = requestDTO.Fee,
