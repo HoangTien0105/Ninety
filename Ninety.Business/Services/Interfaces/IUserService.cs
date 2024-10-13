@@ -13,7 +13,7 @@ namespace Ninety.Business.Services.Interfaces
     public interface IUserService
     {
         Task<BaseResponse> GetAll();
-        
+        Task<BaseResponse> UpdateUserStatus(int id, string status);
         Task<BaseResponse> GetById(int id);
         Task<UserDTO> CheckLogin(string email, string password);
         Task<BaseResponse> SignUp(SignUpRequestDTO signUpRequestDTO);

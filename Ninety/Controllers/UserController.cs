@@ -63,5 +63,18 @@ namespace Ninety.Controllers
 
             return StatusCode(user.StatusCode, user);
         }
+
+        /// <summary>
+        /// Update user status
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateUserStatus(int id, string status)
+        {
+            var user = await _userService.UpdateUserStatus(id, status);
+            return StatusCode(user.StatusCode, user);
+        }
     }
 }
