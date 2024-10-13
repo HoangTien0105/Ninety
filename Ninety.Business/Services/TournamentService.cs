@@ -20,12 +20,12 @@ namespace Ninety.Business.Services
 
         private readonly ITournamentRepository _tournamentRepository;
         private readonly ISportRepository _sportRepository;
-        private readonly IOrganizationRepository _organizationRepository;
+        private readonly IUserRepository _organizationRepository;
         private readonly IMapper _mapper;
 
         public TournamentService(ITournamentRepository tournamentRepository,
                                  ISportRepository sportRepository,
-                                 IOrganizationRepository organizationRepository,
+                                 IUserRepository organizationRepository,
                                  IMapper mapper)
         {
             _tournamentRepository = tournamentRepository;
@@ -125,7 +125,7 @@ namespace Ninety.Business.Services
                 };
             }
 
-            var organExist = await _organizationRepository.GetById(requestDTO.OrganId);
+            var organExist = await _organizationRepository.GetById(requestDTO.UserId);
             if (organExist == null)
             {
                 return new BaseResponse
@@ -149,7 +149,7 @@ namespace Ninety.Business.Services
                 Fee = requestDTO.Fee,
                 Place = requestDTO.Place,
                 SportId = requestDTO.SportId,
-                OrganId = requestDTO.OrganId
+                UserId = requestDTO.UserId
             };
 
             await _tournamentRepository.Create(tournament);

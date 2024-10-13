@@ -22,5 +22,11 @@ namespace Ninety.Utils
             Staff
         }
 
+        public enum UserStatus
+        {
+            Normal, 
+            VIP
+        }
+
     }
 }

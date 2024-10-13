@@ -17,17 +17,19 @@ namespace Ninety.Business.Mapping
         {
             CreateMap<User, UserDTO>()
                 .ForMember(d => d.Role, o => o.MapFrom(src => src.Role.ToString()))
-                .ForMember(d => d.Gender, o => o.MapFrom(src => src.Gender.ToString()));
+                .ForMember(d => d.Gender, o => o.MapFrom(src => src.Gender.ToString()))
+                .ForMember(d => d.UserStatus, o => o.MapFrom(src => src.UserStatus.ToString()));
 
             CreateMap<UserDTO, User>()
                 .ForMember(d => d.Role, o => o.MapFrom(src => Enum.Parse<Role>(src.Role)))
-                .ForMember(d => d.Gender, o => o.MapFrom(src => Enum.Parse<Gender>(src.Gender)));
+                .ForMember(d => d.Gender, o => o.MapFrom(src => Enum.Parse<Gender>(src.Gender)))
+                .ForMember(d => d.UserStatus, o => o.MapFrom(src => Enum.Parse<UserStatus>(src.UserStatus)));
 
             CreateMap<Sport, SportDTO>().ReverseMap();
 
             CreateMap<Tournament, TournamentDTO>().ReverseMap();
 
-            CreateMap<Organization, OrganizationDTO>().ReverseMap();
+            //CreateMap<Organization, OrganizationDTO>().ReverseMap();
 
             CreateMap<Match, MatchDTO>().ReverseMap();
 

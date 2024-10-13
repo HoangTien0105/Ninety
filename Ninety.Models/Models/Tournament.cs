@@ -27,13 +27,15 @@ public partial class Tournament
 
     public int SportId { get; set; }
 
-    public int OrganId { get; set; }
+    public int UserId { get; set; }
 
     public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
 
-    public virtual Organization Organ { get; set; } = null!;
+    public virtual ICollection<Ranking> Rankings { get; set; } = new List<Ranking>();
 
     public virtual Sport Sport { get; set; } = null!;
 
     public virtual ICollection<Team> Teams { get; set; } = new List<Team>();
+
+    public virtual User User { get; set; } = null!;
 }

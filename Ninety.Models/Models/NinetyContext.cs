@@ -19,7 +19,9 @@ public partial class NinetyContext : DbContext
 
     public virtual DbSet<Match> Matchs { get; set; }
 
-    public virtual DbSet<Organization> Organizations { get; set; }
+    public virtual DbSet<Payment> Payments { get; set; }
+
+    public virtual DbSet<Ranking> Rankings { get; set; }
 
     public virtual DbSet<Sport> Sports { get; set; }
 
@@ -33,7 +35,7 @@ public partial class NinetyContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=localhost;Database=Ninety;User Id=sa;Password=12345;TrustServerCertificate=True;");
+        => optionsBuilder.UseSqlServer("Server=(local);Database=Ninety;User Id=sa;Password=12345;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -64,14 +66,34 @@ public partial class NinetyContext : DbContext
                 .HasConstraintName("FK_Matchs_Tournaments");
         });
 
-        modelBuilder.Entity<Organization>(entity =>
+        modelBuilder.Entity<Payment>(entity =>
         {
-            entity.Property(e => e.Name).HasMaxLength(200);
+            entity.ToTable("Payment");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Organizations)
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Amount).HasColumnType("decimal(10, 0)");
+            entity.Property(e => e.DateTime).HasColumnType("datetime");
+            entity.Property(e => e.Description).HasMaxLength(250);
+
+            entity.HasOne(d => d.User).WithMany(p => p.Payments)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Organizations_Users");
+                .HasConstraintName("FK_Payment_Users");
+        });
+
+        modelBuilder.Entity<Ranking>(entity =>
+        {
+            entity.ToTable("Ranking");
+
+            entity.HasOne(d => d.Team).WithMany(p => p.Rankings)
+                .HasForeignKey(d => d.TeamId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Ranking_Teams");
+
+            entity.HasOne(d => d.Tournament).WithMany(p => p.Rankings)
+                .HasForeignKey(d => d.TournamentId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Ranking_Tournaments");
         });
 
         modelBuilder.Entity<Sport>(entity =>
@@ -110,15 +132,15 @@ public partial class NinetyContext : DbContext
             entity.Property(e => e.Place).HasMaxLength(100);
             entity.Property(e => e.StartDate).HasColumnType("datetime");
 
-            entity.HasOne(d => d.Organ).WithMany(p => p.Tournaments)
-                .HasForeignKey(d => d.OrganId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Tournaments_Organizations");
-
             entity.HasOne(d => d.Sport).WithMany(p => p.Tournaments)
                 .HasForeignKey(d => d.SportId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Tournaments_Sports");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Tournaments)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Tournaments_Users");
         });
 
         modelBuilder.Entity<User>(entity =>

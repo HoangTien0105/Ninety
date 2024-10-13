@@ -99,9 +99,6 @@ builder.Services.AddScoped<ITournamentRepository, TournamentRepository>();
 builder.Services.AddScoped<IMatchService, MatchService>();
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 
-builder.Services.AddScoped<IOrganizationService, OrganizationService>();
-builder.Services.AddScoped<IOrganizationRepository, OrganizationRepository>();
-
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 

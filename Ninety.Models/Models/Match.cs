@@ -15,6 +15,10 @@ public partial class Match
 
     public string TotalResult { get; set; } = null!;
 
+    public int? Bracket { get; set; }
+
+    public int? Round { get; set; }
+
     public DateTime? Date { get; set; }
 
     public int TournamentId { get; set; }

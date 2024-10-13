@@ -28,6 +28,6 @@ namespace Ninety.Models.DTOs.Request
 
         public int SportId { get; set; }
 
-        public int OrganId { get; set; }
+        public int UserId { get; set; }
     }
 }

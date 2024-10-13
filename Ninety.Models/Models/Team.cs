@@ -13,6 +13,8 @@ public partial class Team
 
     public int TournamentId { get; set; }
 
+    public virtual ICollection<Ranking> Rankings { get; set; } = new List<Ranking>();
+
     public virtual ICollection<TeamDetail> TeamDetails { get; set; } = new List<TeamDetail>();
 
     public virtual Tournament Tournament { get; set; } = null!;
