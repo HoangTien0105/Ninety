@@ -113,5 +113,29 @@ namespace Ninety.Data.Repositories
 
             tournaments = tournaments.OrderBy(orderQuery);
         }
+
+        public async Task<Tournament> Update(Tournament tournament)
+        {
+            // Sử dụng Transaction để đảm bảo tính toàn vẹn dữ liệu
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    _context.Tournaments.Update(tournament);
+                    await _context.SaveChangesAsync();
+
+                    // Commit transaction sau khi các thao tác đã thành công
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    // Rollback transaction nếu có lỗi
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
+
+            return tournament;
+        }
     }
 }

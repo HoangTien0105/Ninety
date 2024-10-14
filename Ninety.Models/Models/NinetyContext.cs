@@ -57,7 +57,9 @@ public partial class NinetyContext : DbContext
 
         modelBuilder.Entity<Match>(entity =>
         {
+            entity.Property(e => e.Bracket).HasMaxLength(50);
             entity.Property(e => e.Date).HasColumnType("datetime");
+            entity.Property(e => e.Round).HasMaxLength(50);
             entity.Property(e => e.TotalResult).HasMaxLength(50);
 
             entity.HasOne(d => d.Tournament).WithMany(p => p.Matches)

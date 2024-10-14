@@ -254,5 +254,66 @@ namespace Ninety.Business.Services
                 Data = _mapper.Map<List<UserDTO>>(users)
             };
         }
+
+        public async Task<BaseResponse> RegisterTournament(RegisterTournamentRequestDTO registerTournamentRequestDTO)
+        {
+            var tournament = await _tournamentRepository.GetById(registerTournamentRequestDTO.TournamentId);
+
+            if (tournament == null)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 404,
+                    Message = "Tournament not found",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            if(tournament.IsRegister == false || DateTime.UtcNow.AddHours(7) < tournament.StartDate || tournament.SlotLeft <= 0)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 404,
+                    Message = "Can not register this tournament",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            var existingRegistration = await _teamRepository.GetByNameAndTournamentId(registerTournamentRequestDTO.Name, registerTournamentRequestDTO.TournamentId);
+
+            if (existingRegistration != null)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 400,
+                    Message = "Team is already registered in this tournament",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            Team registerTeam = new Team
+            {
+                Name = registerTournamentRequestDTO.Name,
+                Description = registerTournamentRequestDTO.Description,
+                TournamentId = registerTournamentRequestDTO.TournamentId
+            };
+
+            await _teamRepository.Create(registerTeam);
+
+            tournament.SlotLeft--;
+
+            await _tournamentRepository.Update(tournament);
+
+            return new BaseResponse
+            {
+                StatusCode = 200,
+                Message = "Team registered successfully",
+                IsSuccess = true,
+                Data = _mapper.Map<Team>(registerTeam)
+            };
+        }
     }
 }
