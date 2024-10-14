@@ -33,6 +33,8 @@ namespace Ninety.Business.Mapping
 
             CreateMap<Match, MatchDTO>().ReverseMap();
 
+            CreateMap<Ranking, RankingDTO>().ReverseMap();
+
             CreateMap<Team, TeamDTO>().ReverseMap();
 
             CreateMap<BadmintonMatchDetail, BadmintonMatchDetailDTO>().ReverseMap();
