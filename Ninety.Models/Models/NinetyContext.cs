@@ -41,7 +41,6 @@ public partial class NinetyContext : DbContext
     {
         modelBuilder.Entity<BadmintonMatchDetail>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.ApointSet1).HasColumnName("APointSet1");
             entity.Property(e => e.ApointSet2).HasColumnName("APointSet2");
             entity.Property(e => e.ApointSet3).HasColumnName("APointSet3");

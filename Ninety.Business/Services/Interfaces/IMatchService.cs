@@ -16,5 +16,6 @@ namespace Ninety.Business.Services.Interfaces
         Task<BaseResponse> GetByTournamentId(int id);
 
         Task<BaseResponse> Create(CreateMatchDTO request);
+        Task<BaseResponse> CreateMatchesForLeague(int tournamentId);
     }
 }

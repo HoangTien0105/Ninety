@@ -175,5 +175,10 @@ namespace Ninety.Data.Repositories
                 }
             }
         }
+
+        public async Task<List<Team>> GetByTournamentId(int tournamentId)
+        {
+            return await _context.Teams.Where(e => e.TournamentId == tournamentId).ToListAsync();
+        }
     }
 }

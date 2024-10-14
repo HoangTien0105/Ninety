@@ -72,5 +72,18 @@ namespace Ninety.Controllers
 
             return StatusCode(sports.StatusCode, sports);
         }
+
+        /// <summary>
+        /// Create match for league event
+        /// </summary>
+        /// <param name="createMatchDTO"></param>
+        /// <returns></returns>
+        [HttpPost("{id}")]
+        public async Task<IActionResult> CreateMatchForLeague(int id)
+        {
+            var sports = await _matchService.CreateMatchesForLeague(id);
+
+            return StatusCode(sports.StatusCode, sports);
+        }
     }
 }

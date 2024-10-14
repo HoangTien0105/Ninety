@@ -118,6 +118,125 @@ namespace Ninety.Business.Services
             };
         }
 
+        public async Task<BaseResponse> CreateMatchesForLeague(int tournamentId)
+        {
+            try
+            {
+                var tournament = await _tournamentRepository.GetById(tournamentId);
+
+                if (tournament == null)
+                {
+                    return new BaseResponse
+                    {
+                        StatusCode = 404,
+                        Message = "Tournament not found",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                }
+
+                if (tournament.CreateMatch == true)
+                {
+                    return new BaseResponse
+                    {
+                        StatusCode = 404,
+                        Message = "Match already created",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                }
+
+                if (tournament.Format.ToLower().Trim() != "league")
+                {
+                    return new BaseResponse
+                    {
+                        StatusCode = 400,
+                        Message = "Tournament format is not 'league'",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                }
+
+                var teams = await _teamRepository.GetByTournamentId(tournamentId);
+
+                if (teams == null || teams.Count <= 2)
+                {
+                    return new BaseResponse
+                    {
+                        StatusCode = 400,
+                        Message = "Not enough teams to create matches",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                }
+
+                List<Match> matches = new List<Match>();
+                List<BadmintonMatchDetail> matchDetails = new List<BadmintonMatchDetail>();
+                int round = 1;
+                DateTime currentRoundDate = tournament.StartDate;
+
+                int teamCount = teams.Count;
+                bool oddTeams = (teamCount % 2 != 0);  // Kiểm tra số đội lẻ
+                if (oddTeams) teamCount++;  // Nếu số đội lẻ, thêm một "đội ma"
+
+                // Tạo danh sách thứ tự đội
+                var teamList = teams.ToList();
+
+                for (int currentRound = 1; currentRound < teamCount; currentRound++)
+                {
+                    for (int i = 0; i < teamCount / 2; i++)
+                    {
+                        int teamAIndex = i;
+                        int teamBIndex = teamCount - 1 - i;
+
+                        if (teamAIndex < teams.Count && teamBIndex < teams.Count)
+                        {
+                            Match match = new Match
+                            {
+                                TeamA = teamList[teamAIndex].Id,
+                                TeamB = teamList[teamBIndex].Id,
+                                TotalResult = "Not happened yet",
+                                Date = currentRoundDate,
+                                TournamentId = tournamentId,
+                                Round = currentRound.ToString()
+                            };
+
+                            matches.Add(match);
+                        }
+                    }
+
+                    // Xoay vòng các đội (đội đầu tiên cố định)
+                    var lastTeam = teamList.Last();
+                    teamList.RemoveAt(teamCount - 1);
+                    teamList.Insert(1, lastTeam);
+
+                    // Cập nhật ngày cho vòng tiếp theo
+                    currentRoundDate = currentRoundDate.AddDays(7);  // Mỗi vòng cách nhau 1 tuần
+                }
+
+                await _matchRepository.CreateMatchesWithTransaction(matches);
+
+                return new BaseResponse
+                {
+                    StatusCode = 200,
+                    Message = "League matches created successfully!",
+                    IsSuccess = true,
+                    Data = null
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 500,
+                    Message = $"An error occurred: {ex.Message}",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+        }
+
         public async Task<BaseResponse> GetAll()
         {
             var matches = await _matchRepository.GetAll();
