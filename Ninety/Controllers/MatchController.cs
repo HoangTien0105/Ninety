@@ -47,6 +47,20 @@ namespace Ninety.Controllers
 
 
         /// <summary>
+        /// Get all match of a tournament
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("tournament/{id}")]
+        public async Task<IActionResult> GetByTournamentId(int id)
+        {
+            var sports = await _matchService.GetByTournamentId(id);
+
+            return StatusCode(sports.StatusCode, sports);
+        }
+
+
+        /// <summary>
         /// Create match
         /// </summary>
         /// <param name="createMatchDTO"></param>
