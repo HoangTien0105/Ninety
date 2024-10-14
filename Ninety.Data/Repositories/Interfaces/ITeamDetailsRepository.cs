@@ -13,6 +13,7 @@ namespace Ninety.Data.Repositories.Interfaces
         Task<TeamDetail> GetById(int id);
         Task<TeamDetail> Create(TeamDetail team);
         Task<List<TeamDetail>> GetTeamMembers(int id);
+        Task<bool> IsUserInAnotherTeamInSameTournament(int userId, int tournamentId);
 
     }
 }

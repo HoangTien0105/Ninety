@@ -57,17 +57,17 @@ namespace Ninety.Controllers
             return StatusCode(sports.StatusCode, sports);
         }
 
-        /// <summary>
-        /// Create team
-        /// </summary>
-        /// <param name="createTeamRequestDTO"></param>
-        /// <returns></returns>
-        [HttpPost()]
-        public async Task<IActionResult> CreateTeam(CreateTeamRequestDTO createTeamRequestDTO)
-        {
-            var organ = await _teamService.Create(createTeamRequestDTO);
-            return StatusCode(organ.StatusCode, organ);
-        }
+        ///// <summary>
+        ///// Create team
+        ///// </summary>
+        ///// <param name="createTeamRequestDTO"></param>
+        ///// <returns></returns>
+        //[HttpPost()]
+        //public async Task<IActionResult> CreateTeam(CreateTeamRequestDTO createTeamRequestDTO)
+        //{
+        //    var organ = await _teamService.Create(createTeamRequestDTO);
+        //    return StatusCode(organ.StatusCode, organ);
+        //}
 
         /// <summary>
         /// Register API
@@ -82,6 +82,11 @@ namespace Ninety.Controllers
             return StatusCode(organ.StatusCode, organ);
         }
 
+        /// <summary>
+        /// Create team API
+        /// </summary>
+        /// <param name="registerTournamentRequestDTO"></param>
+        /// <returns></returns>
         [HttpPost("tournaments")]
         public async Task<IActionResult> RegisterTournaments([FromBody] RegisterTournamentRequestDTO registerTournamentRequestDTO)
         {

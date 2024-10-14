@@ -270,7 +270,7 @@ namespace Ninety.Business.Services
                 };
             }
 
-            if(tournament.IsRegister == false || DateTime.UtcNow.AddHours(7) < tournament.StartDate || tournament.SlotLeft <= 0)
+            if(tournament.IsRegister == false || DateTime.UtcNow.AddHours(7) > tournament.StartDate || tournament.SlotLeft <= 0)
             {
                 return new BaseResponse
                 {
@@ -294,6 +294,32 @@ namespace Ninety.Business.Services
                 };
             }
 
+            var user = await _userRepository.GetById(registerTournamentRequestDTO.UserId);
+
+            if (user == null)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 404,
+                    Message = "User not found",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            var isUserInSameTournament = await _teamDetailsRepository.IsUserInAnotherTeamInSameTournament(registerTournamentRequestDTO.UserId, registerTournamentRequestDTO.TournamentId);
+
+            if (isUserInSameTournament)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 400,
+                    Message = "User is already registered in another team for this tournament",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
             Team registerTeam = new Team
             {
                 Name = registerTournamentRequestDTO.Name,
@@ -301,19 +327,33 @@ namespace Ninety.Business.Services
                 TournamentId = registerTournamentRequestDTO.TournamentId
             };
 
-            await _teamRepository.Create(registerTeam);
-
-            tournament.SlotLeft--;
-
-            await _tournamentRepository.Update(tournament);
-
-            return new BaseResponse
+            TeamDetail teamDetail = new TeamDetail
             {
-                StatusCode = 200,
-                Message = "Team registered successfully",
-                IsSuccess = true,
-                Data = _mapper.Map<Team>(registerTeam)
+                UserId = registerTournamentRequestDTO.UserId
             };
+
+            try
+            {
+                await _teamRepository.CreateTeamAndDetailAsync(registerTeam, teamDetail, tournament);
+
+                return new BaseResponse
+                {
+                    StatusCode = 200,
+                    Message = "Team registered successfully",
+                    IsSuccess = true,
+                    Data = _mapper.Map<TeamDTO>(registerTeam)
+                };
+            }
+            catch (Exception)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 500,
+                    Message = "An error occurred during the registration process",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
         }
     }
 }
