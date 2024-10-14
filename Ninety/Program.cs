@@ -102,6 +102,9 @@ builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 
+builder.Services.AddScoped<IRankingService, RankingService>();
+builder.Services.AddScoped<IRankingRepository, RankingRepository>();
+
 builder.Services.AddScoped<ITeamDetailsRepository, TeamDetailRepository>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 

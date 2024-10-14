@@ -156,5 +156,31 @@ namespace Ninety.Business.Services
                 };
             }
         }
+
+        public async Task<BaseResponse> GetByTournamentId(int id)
+        {
+            var tournament = await _tournamentRepository.GetById(id);
+
+            if (tournament == null)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 404,
+                    Message = "Can't not found this tournament",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            var ranking = await _matchRepository.GetByTournamentId(id);
+
+            return new BaseResponse
+            {
+                StatusCode = 200,
+                Message = "",
+                IsSuccess = true,
+                Data = _mapper.Map<List<MatchDTO>>(ranking)
+            };
+        }
     }
 }
