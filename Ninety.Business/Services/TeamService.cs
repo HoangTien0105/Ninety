@@ -211,5 +211,48 @@ namespace Ninety.Business.Services
                 Data = null
             };
         }
+
+        public async Task<BaseResponse> GetTeamMember(int teamId)
+        {
+            var team = await _teamRepository.GetById(teamId);
+            if (team == null)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 404,
+                    Message = "Team not found",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            var teamMembersId = await _teamDetailsRepository.GetTeamMembers(teamId);
+
+            List<User> users = new List<User>();
+
+            foreach (var e in teamMembersId)
+            {
+                var user = await _userRepository.GetById(e.UserId);
+                if(user == null)
+                {
+                    return new BaseResponse
+                    {
+                        StatusCode = 404,
+                        Message = "User not found",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                } 
+                users.Add(user);
+            }
+
+            return new BaseResponse
+            {
+                StatusCode = 200,
+                Message = null,
+                IsSuccess = true,
+                Data = _mapper.Map<List<UserDTO>>(users)
+            };
+        }
     }
 }

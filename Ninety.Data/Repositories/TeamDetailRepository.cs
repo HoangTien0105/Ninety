@@ -50,5 +50,11 @@ namespace Ninety.Data.Repositories
         {
             return await _context.TeamDetails.FirstOrDefaultAsync(e => e.Id == id);
         }
+
+        public async Task<List<TeamDetail>> GetTeamMembers(int id)
+        {
+            var teams = await _context.TeamDetails.Where(e => e.TeamId == id).ToListAsync();
+            return teams;
+        }
     }
 }

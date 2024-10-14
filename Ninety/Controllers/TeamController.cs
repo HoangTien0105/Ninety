@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Ninety.Business.Services;
 using Ninety.Business.Services.Interfaces;
 using Ninety.Models.DTOs.Request;
+using Ninety.Models.Models;
 using Ninety.Models.PSSModels;
 
 namespace Ninety.Controllers
@@ -78,6 +79,18 @@ namespace Ninety.Controllers
         public async Task<IActionResult> RegisterTeam(int teamId, int userId)
         {
             var organ = await _teamService.Register(teamId, userId);
+            return StatusCode(organ.StatusCode, organ);
+        }
+
+        /// <summary>
+        /// Get all member of a team
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("member/{id}")]
+        public async Task<IActionResult> GetTeamMember(int id)
+        {
+            var organ = await _teamService.GetTeamMember(id);
             return StatusCode(organ.StatusCode, organ);
         }
     }
