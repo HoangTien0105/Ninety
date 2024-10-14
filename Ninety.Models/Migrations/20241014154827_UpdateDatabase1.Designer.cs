@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Ninety.Models.Models;
 
@@ -11,9 +12,11 @@ using Ninety.Models.Models;
 namespace Ninety.Models.Migrations
 {
     [DbContext(typeof(NinetyContext))]
-    partial class NinetyContextModelSnapshot : ModelSnapshot
+    [Migration("20241014154827_UpdateDatabase1")]
+    partial class UpdateDatabase1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,16 +72,14 @@ namespace Ninety.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Bracket")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<int?>("Bracket")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("Date")
                         .HasColumnType("datetime");
 
-                    b.Property<string>("Round")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<int?>("Round")
+                        .HasColumnType("int");
 
                     b.Property<int>("TeamA")
                         .HasColumnType("int");
@@ -239,9 +240,6 @@ namespace Ninety.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool?>("CreateMatch")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -255,9 +253,6 @@ namespace Ninety.Models.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<bool?>("IsRegister")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
