@@ -16,5 +16,6 @@ namespace Ninety.Data.Repositories.Interfaces
         Task<Team> Create(Team team);   
         Task<Team> CreateWithTeamDetails(Team team, TeamDetail teamDetail);
         Task<PagedList<Team>> GetListTeam(TeamParameters teamParameters);
+        Task CreateTeamAndDetailAsync(Team team, TeamDetail teamDetail, Tournament tournament);
     }
 }

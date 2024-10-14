@@ -13,5 +13,6 @@ namespace Ninety.Models.DTOs.Request
         public string? Description { get; set; }
 
         public int TournamentId { get; set; }
+        public int UserId { get; set; }
     }
 }

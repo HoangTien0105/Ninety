@@ -143,5 +143,37 @@ namespace Ninety.Data.Repositories
         {
             return await _context.Teams.FirstOrDefaultAsync(e => e.Name.ToLower().Trim() == name.ToLower().Trim() && e.TournamentId == tournamentId);
         }
+
+        public async Task CreateTeamAndDetailAsync(Team team, TeamDetail teamDetail, Tournament tournament)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Add team
+                    await _context.Teams.AddAsync(team);
+                    await _context.SaveChangesAsync();
+
+                    // Add team detail
+                    teamDetail.TeamId = team.Id;
+                    await _context.TeamDetails.AddAsync(teamDetail);
+                    await _context.SaveChangesAsync();
+
+                    // Update tournament
+                    tournament.SlotLeft--;
+                    _context.Tournaments.Update(tournament);
+                    await _context.SaveChangesAsync();
+
+                    // Commit the transaction if all steps succeed
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    // Rollback the transaction if any step fails
+                    await transaction.RollbackAsync();
+                    throw; // Re-throw the exception to let the service layer handle it
+                }
+            }
+        }
     }
 }

@@ -56,5 +56,12 @@ namespace Ninety.Data.Repositories
             var teams = await _context.TeamDetails.Where(e => e.TeamId == id).ToListAsync();
             return teams;
         }
+
+        public async Task<bool> IsUserInAnotherTeamInSameTournament(int userId, int tournamentId)
+        {
+            return await _context.TeamDetails
+                    .Include(td => td.Team) 
+                    .AnyAsync(td => td.UserId == userId && td.Team.TournamentId == tournamentId);
+        }
     }
 }
