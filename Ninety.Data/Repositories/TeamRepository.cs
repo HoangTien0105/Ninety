@@ -77,7 +77,7 @@ namespace Ninety.Data.Repositories
 
         public async Task<Team> GetById(int id)
         {
-            return await _context.Teams.FirstOrDefaultAsync(e => e.Id == id);
+            return await _context.Teams.Include(c => c.Tournament).FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<PagedList<Team>> GetListTeam(TeamParameters teamParameters)

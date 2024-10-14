@@ -52,7 +52,7 @@ namespace Ninety.Data.Repositories
 
         public async Task<PagedList<Tournament>> GetAllOrganazition(TournamentParameter tournamentParameter)
         {
-            var query = _context.Tournaments.AsNoTracking();
+            var query = _context.Tournaments.Include(c => c.User).Include(c => c.Sport).AsNoTracking();
             SearchByName(ref query, tournamentParameter.Name);
             ApplySort(ref query, tournamentParameter.OrderBy);
             return await PagedList<Tournament>.ToPagedList(query,
