@@ -18,5 +18,6 @@ namespace Ninety.Business.Services.Interfaces
         Task<BaseResponse> Create(CreateTeamRequestDTO requestDTO);
         Task<BaseResponse> Register(int teamId, int userId);
         Task<BaseResponse> GetListTeam(TeamParameters teamParameters);
+        Task<BaseResponse> GetTeamMember(int teamId);
     }
 }
