@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Ninety.Models.Models;
 
@@ -11,9 +12,11 @@ using Ninety.Models.Models;
 namespace Ninety.Models.Migrations
 {
     [DbContext(typeof(NinetyContext))]
-    partial class NinetyContextModelSnapshot : ModelSnapshot
+    [Migration("20241014162509_UpdateDatabase2")]
+    partial class UpdateDatabase2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
