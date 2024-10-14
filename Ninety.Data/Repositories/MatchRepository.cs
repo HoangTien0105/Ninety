@@ -51,6 +51,11 @@ namespace Ninety.Data.Repositories
             return await _context.Matchs.FirstOrDefaultAsync(e => e.Id == id);
         }
 
+        public async Task<List<Match>> GetByTournamentId(int id)
+        {
+            return await _context.Matchs.Where(e => e.TournamentId == id).ToListAsync();
+        }
+
         public async Task<Match> Update(Match match)
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())

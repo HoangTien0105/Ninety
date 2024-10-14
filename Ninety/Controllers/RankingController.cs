@@ -1,74 +1,58 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Ninety.Business.Services.Interfaces;
-using Ninety.Models.DTOs.Request;
 
 namespace Ninety.Controllers
 {
     [ApiController]
     [ApiVersion("1.0")]
     [ApiExplorerSettings(GroupName = "v1")]
-    [Route("api/match")]
+    [Route("api/ranking")]
     [ApiVersionNeutral]
-    public class MatchController : ControllerBase
+    public class RankingController : ControllerBase
     {
-        private readonly IMatchService _matchService;
+        private readonly IRankingService _rankingService;
 
-        public MatchController(IMatchService matchService)
+        public RankingController(IRankingService rankingService)
         {
-            _matchService = matchService;
+            _rankingService = rankingService;
         }
 
         /// <summary>
-        /// Get all match
+        /// Get all ranking
         /// </summary>
         /// <returns></returns>
         [HttpGet()]
         public async Task<IActionResult> GetAllMatch()
         {
-            var sports = await _matchService.GetAll();
+            var sports = await _rankingService.GetAll();
 
             return StatusCode(sports.StatusCode, sports);
         }
 
 
         /// <summary>
-        /// Get match by id
+        /// Get ranking by id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var sports = await _matchService.GetById(id);
+            var sports = await _rankingService.GetById(id);
 
             return StatusCode(sports.StatusCode, sports);
         }
 
 
         /// <summary>
-        /// Get all match of a tournament
+        /// Get all ranking by tournament id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("tournament/{id}")]
         public async Task<IActionResult> GetByTournamentId(int id)
         {
-            var sports = await _matchService.GetByTournamentId(id);
-
-            return StatusCode(sports.StatusCode, sports);
-        }
-
-
-        /// <summary>
-        /// Create match
-        /// </summary>
-        /// <param name="createMatchDTO"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<IActionResult> CreateMatch(CreateMatchDTO createMatchDTO)
-        {
-            var sports = await _matchService.Create(createMatchDTO);
+            var sports = await _rankingService.GetByTournamentId(id);
 
             return StatusCode(sports.StatusCode, sports);
         }
