@@ -18,6 +18,10 @@ namespace Ninety.Models.DTOs
 
         public string TotalResult { get; set; } = null!;
 
+        public string? Bracket { get; set; }
+
+        public string? Round { get; set; }
+
         public DateTime? Date { get; set; }
 
         public int TournamentId { get; set; }
