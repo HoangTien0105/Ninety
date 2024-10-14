@@ -82,5 +82,51 @@ namespace Ninety.Data.Repositories
                 }
             }
         }
+        public async Task CreateMatchesWithTransaction(List<Match> matches)
+        {
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // Thêm tất cả các trận đấu và lưu để lấy Match.Id
+                    foreach (var match in matches)
+                    {
+                        await _context.Matchs.AddAsync(match);
+                    }
+
+                    // Lưu thay đổi vào database để lấy các Match.Id
+                    await _context.SaveChangesAsync();
+
+                    // Tạo chi tiết trận đấu với Match.Id vừa được sinh ra
+                    foreach (var match in matches)
+                    {
+                        // Tạo mới BadmintonMatchDetail cho từng trận đấu
+                        BadmintonMatchDetail detail = new BadmintonMatchDetail
+                        {
+                            ApointSet1 = 0,
+                            BpointSet1 = 0,
+                            ApointSet2 = 0,
+                            BpointSet2 = 0,
+                            MatchId = match.Id  // Sử dụng Match.Id đã được sinh
+                        };
+
+                        // Lưu chi tiết trận đấu vào database
+                        await _context.BadmintonMatchDetails.AddAsync(detail);
+                    }
+
+                    // Lưu tất cả thay đổi lần cuối
+                    await _context.SaveChangesAsync();
+
+                    // Commit transaction nếu thành công
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    // Rollback transaction nếu có lỗi
+                    await transaction.RollbackAsync();
+                    throw new Exception("An error occurred while creating matches and details", ex);  // Ném lại lỗi để tầng service xử lý
+                }
+            }
+        }
     }
 }

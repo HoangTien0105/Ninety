@@ -51,6 +51,31 @@ namespace Ninety.Data.Repositories
             return await _context.BadmintonMatchDetails.FirstOrDefaultAsync(e => e.Id == id);
         }
 
+        public async Task AddMatchDetails(List<BadmintonMatchDetail> matchDetails)
+        {
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // Thêm toàn bộ danh sách chi tiết trận đấu vào DbContext
+                    await _context.BadmintonMatchDetails.AddRangeAsync(matchDetails);
+
+                    // Lưu thay đổi vào cơ sở dữ liệu
+                    await _context.SaveChangesAsync();
+
+                    // Commit transaction nếu mọi thứ thành công
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    // Rollback transaction nếu có lỗi xảy ra
+                    await transaction.RollbackAsync();
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
+
+
         public async Task<BadmintonMatchDetail> Update(BadmintonMatchDetail badmintonMatchDetail)
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())
