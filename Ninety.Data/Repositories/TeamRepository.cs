@@ -138,5 +138,10 @@ namespace Ninety.Data.Repositories
 
             teams = teams.OrderBy(orderQuery);
         }
+
+        public async Task<Team> GetByTournametAndTeamId(string name, int tournamentId)
+        {
+            return await _context.Teams.FirstOrDefaultAsync(e => e.Name.ToLower().Trim() == name.ToLower().Trim() && e.TournamentId == tournamentId);
+        }
     }
 }
