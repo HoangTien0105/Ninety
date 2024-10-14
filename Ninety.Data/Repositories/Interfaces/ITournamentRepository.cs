@@ -13,6 +13,7 @@ namespace Ninety.Data.Repositories.Interfaces
         Task<List<Tournament>> GetAll();
         Task<Tournament> GetById(int id);
         Task<Tournament> Create(Tournament tournament);
+        Task<Tournament> Update(Tournament tournament);
         Task<PagedList<Tournament>> GetAllOrganazition(TournamentParameter tournamentParameter);
     }
 }

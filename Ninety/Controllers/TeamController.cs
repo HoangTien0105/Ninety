@@ -82,6 +82,13 @@ namespace Ninety.Controllers
             return StatusCode(organ.StatusCode, organ);
         }
 
+        [HttpPost("tournaments")]
+        public async Task<IActionResult> RegisterTournaments([FromBody] RegisterTournamentRequestDTO registerTournamentRequestDTO)
+        {
+            var organ = await _teamService.RegisterTournament(registerTournamentRequestDTO);
+            return StatusCode(organ.StatusCode, organ);
+        }
+
         /// <summary>
         /// Get all member of a team
         /// </summary>

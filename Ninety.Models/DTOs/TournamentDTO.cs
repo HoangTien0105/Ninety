@@ -20,16 +20,22 @@ namespace Ninety.Models.DTOs
 
         public int NumOfParticipants { get; set; }
 
+        public int? SlotLeft { get; set; }
+
         public DateTime StartDate { get; set; }
 
         public DateTime EndDate { get; set; }
 
         public double Fee { get; set; }
 
+        public bool? IsRegister { get; set; }
+
+        public bool? CreateMatch { get; set; }
+
         public string Place { get; set; } = null!;
 
         public int SportId { get; set; }
 
-        public int OrganId { get; set; }
+        public int UserId { get; set; }
     }
 }

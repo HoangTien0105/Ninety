@@ -15,9 +15,9 @@ public partial class Match
 
     public string TotalResult { get; set; } = null!;
 
-    public int? Bracket { get; set; }
+    public string? Bracket { get; set; }
 
-    public int? Round { get; set; }
+    public string? Round { get; set; }
 
     public DateTime? Date { get; set; }
 

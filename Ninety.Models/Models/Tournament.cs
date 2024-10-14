@@ -25,6 +25,10 @@ public partial class Tournament
 
     public double Fee { get; set; }
 
+    public bool? IsRegister { get; set; }
+
+    public bool? CreateMatch { get; set; }
+
     public string Place { get; set; } = null!;
 
     public int SportId { get; set; }
