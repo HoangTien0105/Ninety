@@ -130,6 +130,12 @@ namespace Ninety.Data.Repositories
                     // Lưu tất cả thay đổi lần cuối
                     await _context.SaveChangesAsync();
 
+                    var tournament = await _context.Tournaments.FirstOrDefaultAsync(e => e.Id == tournamentId);
+
+                    tournament.CreateMatch = false; 
+                    
+                    await _context.SaveChangesAsync();
+
                     // Commit transaction nếu thành công
                     await transaction.CommitAsync();
                 }
