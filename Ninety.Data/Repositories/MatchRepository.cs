@@ -82,7 +82,7 @@ namespace Ninety.Data.Repositories
                 }
             }
         }
-        public async Task CreateMatchesWithTransaction(List<Match> matches)
+        public async Task CreateMatchesWithTransaction(List<Match> matches, List<Team> teams, int tournamentId)
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
@@ -114,6 +114,19 @@ namespace Ninety.Data.Repositories
                         await _context.BadmintonMatchDetails.AddAsync(detail);
                     }
 
+                    foreach (var team in teams)
+                    {
+                        Ranking ranking = new Ranking
+                        {
+                            Point = 0,   // Khởi tạo điểm ban đầu là 0
+                            Rank = 0,    // Khởi tạo thứ hạng ban đầu là 0
+                            TournamentId = tournamentId,  // Sử dụng Id của giải đấu
+                            TeamId = team.Id  // Sử dụng Id của đội tham gia
+                        };
+
+                        // Lưu thông tin bảng xếp hạng vào database
+                        await _context.Rankings.AddAsync(ranking);
+                    }
                     // Lưu tất cả thay đổi lần cuối
                     await _context.SaveChangesAsync();
 
@@ -127,6 +140,11 @@ namespace Ninety.Data.Repositories
                     throw new Exception("An error occurred while creating matches and details", ex);  // Ném lại lỗi để tầng service xử lý
                 }
             }
+        }
+
+        public async Task<List<Match>> GetByTeamAndTournamentId(int teamId, int tournamentId)
+        {
+            return await _context.Matchs.Where(e => e.TournamentId == tournamentId && (e.TeamA == teamId || e.TeamB == teamId)).ToListAsync();
         }
     }
 }

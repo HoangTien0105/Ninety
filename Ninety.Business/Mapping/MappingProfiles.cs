@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Ninety.Models.DTOs;
+using Ninety.Models.DTOs.Response;
 using Ninety.Models.Models;
 using Ninety.Models.PSSModels;
 using System;
@@ -36,6 +37,8 @@ namespace Ninety.Business.Mapping
             CreateMap<Ranking, RankingDTO>().ReverseMap();
 
             CreateMap<Team, TeamDTO>().ReverseMap();
+
+            CreateMap<Team, TeamResponseDTO>().ReverseMap();
 
             CreateMap<BadmintonMatchDetail, BadmintonMatchDetailDTO>().ReverseMap();
 

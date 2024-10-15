@@ -19,18 +19,21 @@ namespace Ninety.Business.Services
         private readonly IMatchRepository _matchRepository;
         private readonly ITournamentRepository _tournamentRepository;
         private readonly ITeamRepository _teamRepository;
+        private readonly IRankingRepository _rankingRepository;
         private readonly IBadmintonMatchDetailRepository _badmintonMatchDetailRepository;
         private readonly IMapper _mapper;
 
         public MatchService(IMatchRepository matchRepository,
                             ITournamentRepository tournamentRepository,
                             ITeamRepository teamRepository,
+                            IRankingRepository rankingRepository,
                             IBadmintonMatchDetailRepository badmintonMatchDetailRepository,
                             IMapper mapper)
         {
             _matchRepository = matchRepository;
             _tournamentRepository = tournamentRepository;
             _teamRepository = teamRepository;
+            _rankingRepository = rankingRepository;
             _badmintonMatchDetailRepository = badmintonMatchDetailRepository;
             _mapper = mapper;
         }
@@ -214,7 +217,8 @@ namespace Ninety.Business.Services
                     currentRoundDate = currentRoundDate.AddDays(7);  // Mỗi vòng cách nhau 1 tuần
                 }
 
-                await _matchRepository.CreateMatchesWithTransaction(matches);
+                await _matchRepository.CreateMatchesWithTransaction(matches, teamList, tournamentId);
+
 
                 return new BaseResponse
                 {
@@ -274,6 +278,43 @@ namespace Ninety.Business.Services
                     Data = _mapper.Map<MatchDTO>(matches)
                 };
             }
+        }
+
+        public async Task<BaseResponse> GetByTeamAndTournamentId(int teamId, int tournamentId)
+        {
+            var team = await _teamRepository.GetById(teamId);
+            if(team == null)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 404,
+                    Message = "Can't not found this team",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            var tournament = await _tournamentRepository.GetById(tournamentId);
+            if (tournament == null)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 404,
+                    Message = "Can't not found this tournament",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            var matches = await _matchRepository.GetByTeamAndTournamentId(teamId, tournamentId);
+
+            return new BaseResponse
+            {
+                StatusCode = 200,
+                Message = "",
+                IsSuccess = true,
+                Data = _mapper.Map<List<MatchDTO>>(matches)
+            };
         }
 
         public async Task<BaseResponse> GetByTournamentId(int id)
