@@ -12,6 +12,8 @@ namespace Ninety.Data.Repositories.Interfaces
         Task<List<Match>> GetAll();
         Task<Match> GetById(int id);
         Task<List<Match>> GetByTournamentId(int id);
+        Task<List<Match>> GetByTeamAndTournamentId(int teamId, int tournamentId);
+
         Task<Match> Create(Match match);
         Task<Match> Update(Match match);
         Task CreateMatchesWithTransaction(List<Match> matches);

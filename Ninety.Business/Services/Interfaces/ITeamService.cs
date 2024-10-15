@@ -13,6 +13,7 @@ namespace Ninety.Business.Services.Interfaces
     public interface ITeamService
     {
         Task<BaseResponse> GetAll();
+        Task<BaseResponse> GetTeamsOfTournament(int tournamentId);
         Task<BaseResponse> GetById(int id);
         Task<BaseResponse> Create(CreateTeamRequestDTO requestDTO);
         Task<BaseResponse> Register(int teamId, int userId);
