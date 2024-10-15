@@ -128,5 +128,10 @@ namespace Ninety.Data.Repositories
                 }
             }
         }
+
+        public async Task<List<Match>> GetByTeamAndTournamentId(int teamId, int tournamentId)
+        {
+            return await _context.Matchs.Where(e => e.TournamentId == tournamentId && (e.TeamA == teamId || e.TeamB == teamId)).ToListAsync();
+        }
     }
 }

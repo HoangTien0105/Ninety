@@ -105,5 +105,18 @@ namespace Ninety.Controllers
             var organ = await _teamService.GetTeamMember(id);
             return StatusCode(organ.StatusCode, organ);
         }
+
+        /// <summary>
+        /// Get all teams of a tournament
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("tournaments/{id}")]
+        public async Task<IActionResult> GetTeamsOfTournament(int id)
+        {
+            var sports = await _teamService.GetTeamsOfTournament(id);
+
+            return StatusCode(sports.StatusCode, sports);
+        }
     }
 }

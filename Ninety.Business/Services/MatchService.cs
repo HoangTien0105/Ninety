@@ -276,6 +276,43 @@ namespace Ninety.Business.Services
             }
         }
 
+        public async Task<BaseResponse> GetByTeamAndTournamentId(int teamId, int tournamentId)
+        {
+            var team = await _teamRepository.GetById(teamId);
+            if(team == null)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 404,
+                    Message = "Can't not found this team",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            var tournament = await _tournamentRepository.GetById(tournamentId);
+            if (tournament == null)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 404,
+                    Message = "Can't not found this tournament",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
+            var matches = await _matchRepository.GetByTeamAndTournamentId(teamId, tournamentId);
+
+            return new BaseResponse
+            {
+                StatusCode = 200,
+                Message = "",
+                IsSuccess = true,
+                Data = _mapper.Map<List<MatchDTO>>(matches)
+            };
+        }
+
         public async Task<BaseResponse> GetByTournamentId(int id)
         {
             var tournament = await _tournamentRepository.GetById(id);
