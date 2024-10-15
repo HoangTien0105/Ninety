@@ -25,5 +25,7 @@ namespace Ninety.Models.DTOs
         public DateTime? Date { get; set; }
 
         public int TournamentId { get; set; }
+
+        public TournamentDTO Tournament { get; set; }
     }
 }

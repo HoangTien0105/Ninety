@@ -62,7 +62,7 @@ namespace Ninety.Data.Repositories
 
         public async Task<Tournament> GetById(int id)
         {
-            return await _context.Tournaments.FirstOrDefaultAsync(e => e.Id == id);
+            return await _context.Tournaments.Include(c => c.Sport).Include(c => c.User).FirstOrDefaultAsync(e => e.Id == id);
         }
 
         private void SearchByName(ref IQueryable<Tournament> tournaments, string tournamentName)

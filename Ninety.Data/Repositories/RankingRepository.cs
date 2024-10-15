@@ -29,7 +29,7 @@ namespace Ninety.Data.Repositories
 
         public async Task<List<Ranking>> GetByTournamentId(int id)
         {
-            return await _context.Rankings.Where(e => e.TournamentId == id).OrderByDescending(e => e.Point).ToListAsync();
+            return await _context.Rankings.Where(e => e.TournamentId == id).Include(c => c.Team).OrderByDescending(e => e.Point).ToListAsync();
         }
     }
 }

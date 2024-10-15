@@ -17,5 +17,7 @@ namespace Ninety.Models.DTOs
         public int TournamentId { get; set; }
 
         public int TeamId { get; set; }
+
+        public TeamDTO Team { get; set; }
     }
 }
