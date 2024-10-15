@@ -87,7 +87,18 @@ namespace Ninety.Business.Services
 
             if (requestDTO.Format.ToLower() == "knockout")
             {
-                int maxParticipants = isVip ? 48 : 16; 
+                if (!isVip)
+                {
+                    return new BaseResponse
+                    {
+                        StatusCode = 400,
+                        Message = "Only VIP users can choose knockout format.",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                }
+
+                int maxParticipants = 48; // Knockout tối đa 48 cho VIP
                 if (requestDTO.NumOfParticipants > maxParticipants)
                 {
                     return new BaseResponse
@@ -101,18 +112,19 @@ namespace Ninety.Business.Services
             }
             else if (requestDTO.Format.ToLower() == "league")
             {
-                if (!isVip)
+                if (isVip)
                 {
                     return new BaseResponse
                     {
                         StatusCode = 400,
-                        Message = "Only VIP users can choose league format.",
+                        Message = "VIP users cannot choose league format.",
                         IsSuccess = false,
                         Data = null
                     };
                 }
 
-                if (requestDTO.NumOfParticipants > 10)
+                int maxParticipants = 10; 
+                if (requestDTO.NumOfParticipants > maxParticipants)
                 {
                     return new BaseResponse
                     {
