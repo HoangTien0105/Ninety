@@ -34,6 +34,8 @@ namespace Ninety.Business.Mapping
 
             CreateMap<Match, MatchDTO>().ReverseMap();
 
+            CreateMap<Match, MatchResponseDTO>().ReverseMap();
+
             CreateMap<Ranking, RankingDTO>().ReverseMap();
 
             CreateMap<Team, TeamDTO>().ReverseMap();
