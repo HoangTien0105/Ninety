@@ -176,6 +176,21 @@ namespace Ninety.Data.Repositories
                         _context.Rankings.Update(ranking);
                     }
 
+                    await _context.SaveChangesAsync();
+
+                    // Cập nhật thứ hạng của các đội
+                    var rankings = await _context.Rankings
+                        .Where(r => r.TournamentId == tournamentId)
+                        .OrderByDescending(r => r.Point)
+                        .ToListAsync();
+
+                    // Cập nhật lại thứ tự xếp hạng cho từng đội
+                    for (int i = 0; i < rankings.Count; i++)
+                    {
+                        rankings[i].Rank = i + 1; // Xếp hạng theo vị trí trong danh sách
+                        _context.Rankings.Update(rankings[i]);
+                    }
+
                     // Lưu thay đổi vào cơ sở dữ liệu
                     await _context.SaveChangesAsync();
 
