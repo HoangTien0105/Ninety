@@ -119,7 +119,7 @@ namespace Ninety.Data.Repositories
                         Ranking ranking = new Ranking
                         {
                             Point = 0,   // Khởi tạo điểm ban đầu là 0
-                            Rank = 0,    // Khởi tạo thứ hạng ban đầu là 0
+                            Rank = 1,    // Khởi tạo thứ hạng ban đầu là 0
                             TournamentId = tournamentId,  // Sử dụng Id của giải đấu
                             TeamId = team.Id  // Sử dụng Id của đội tham gia
                         };
@@ -130,6 +130,12 @@ namespace Ninety.Data.Repositories
                     // Lưu tất cả thay đổi lần cuối
                     await _context.SaveChangesAsync();
 
+                    var tournament = await _context.Tournaments.FirstOrDefaultAsync(e => e.Id == tournamentId);
+
+                    tournament.CreateMatch = false; 
+                    
+                    await _context.SaveChangesAsync();
+
                     // Commit transaction nếu thành công
                     await transaction.CommitAsync();
                 }
@@ -138,6 +144,49 @@ namespace Ninety.Data.Repositories
                     // Rollback transaction nếu có lỗi
                     await transaction.RollbackAsync();
                     throw new Exception("An error occurred while creating matches and details", ex);  // Ném lại lỗi để tầng service xử lý
+                }
+            }
+        }
+
+        public async Task UpdateScoreAndRankingWithTransaction(int matchId, int winningTeamId, int tournamentId)
+        {
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // Lấy trận đấu theo matchId
+                    var match = await _context.Matchs.FindAsync(matchId);
+                    if (match == null)
+                    {
+                        throw new Exception("Match not found.");
+                    }
+
+                    // Cập nhật kết quả trận đấu
+                    match.WinningTeam = winningTeamId;
+                    _context.Matchs.Update(match);
+
+                    // Lấy thông tin xếp hạng của đội chiến thắng
+                    var ranking = await _context.Rankings
+                        .FirstOrDefaultAsync(r => r.TeamId == winningTeamId && r.TournamentId == tournamentId);
+
+                    if (ranking != null)
+                    {
+                        // Cộng thêm 2 điểm cho đội thắng
+                        ranking.Point += 2;
+                        _context.Rankings.Update(ranking);
+                    }
+
+                    // Lưu thay đổi vào cơ sở dữ liệu
+                    await _context.SaveChangesAsync();
+
+                    // Commit transaction nếu các thao tác thành công
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    // Rollback transaction nếu có lỗi
+                    await transaction.RollbackAsync();
+                    throw;
                 }
             }
         }

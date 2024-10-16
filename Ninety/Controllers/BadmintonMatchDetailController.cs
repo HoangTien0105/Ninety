@@ -60,8 +60,14 @@ namespace Ninety.Controllers
         //    return StatusCode(sports.StatusCode, sports);
         //}
 
+        /// <summary>
+        /// Update score and ranking for league tournament
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="upddateBadmintonScoreDTO"></param>
+        /// <returns></returns>
         [HttpPut("id")]
-        public async Task<IActionResult> UpdateScore(int id, UpddateBadmintonScoreDTO upddateBadmintonScoreDTO)
+        public async Task<IActionResult> UpdateScoreForLeague(int id, UpddateBadmintonScoreDTO upddateBadmintonScoreDTO)
         {
             var sports = await _badmintonMatchDetailService.UpdateScore(id, upddateBadmintonScoreDTO);
 

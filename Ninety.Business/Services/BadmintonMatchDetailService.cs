@@ -22,6 +22,7 @@ namespace Ninety.Business.Services
 
         public BadmintonMatchDetailService(IBadmintonMatchDetailRepository badmintonMatchDetailRepository,
                            IMatchRepository matchRepository,
+                           ITournamentRepository tournamentRepository,
                            IMapper mapper)
         {
             _badmintonMatchDetailRepository = badmintonMatchDetailRepository;
@@ -138,7 +139,8 @@ namespace Ninety.Business.Services
 
             if (teamAWins == 2 || teamBWins == 2)
             {
-                match.WinningTeam = teamAWins == 2 ? match.TeamA : match.TeamB;
+                var winningTeamId = teamAWins == 2 ? match.TeamA : match.TeamB;
+                await _matchRepository.UpdateScoreAndRankingWithTransaction(match.Id, winningTeamId, match.TournamentId);
             }
 
             await _matchRepository.Update(match);
