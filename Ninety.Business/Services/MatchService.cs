@@ -159,7 +159,7 @@ namespace Ninety.Business.Services
                         Data = null
                     };
                 }
-
+                
                 var teams = await _teamRepository.GetByTournamentId(tournamentId);
 
                 if (teams == null || teams.Count <= 2)
@@ -334,12 +334,28 @@ namespace Ninety.Business.Services
 
             var ranking = await _matchRepository.GetByTournamentId(id);
 
+            List<MatchResponseDTO> results = new List<MatchResponseDTO>();
+
+            foreach (var match in ranking)
+            {
+                var teamA = await _teamRepository.GetById(match.TeamA);
+
+                var teamB = await _teamRepository.GetById(match.TeamB);
+
+                var matchDTO = _mapper.Map<MatchResponseDTO>(match);
+
+                matchDTO.TeamAName = teamA.Name;
+                matchDTO.TeamBName = teamB.Name;
+
+                results.Add(matchDTO);
+            }
+
             return new BaseResponse
             {
                 StatusCode = 200,
                 Message = "",
                 IsSuccess = true,
-                Data = _mapper.Map<List<MatchDTO>>(ranking)
+                Data = results
             };
         }
     }
