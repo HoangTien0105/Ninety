@@ -308,12 +308,28 @@ namespace Ninety.Business.Services
 
             var matches = await _matchRepository.GetByTeamAndTournamentId(teamId, tournamentId);
 
+            List<MatchResponseDTO> results = new List<MatchResponseDTO>();
+
+            foreach (var match in matches)
+            {
+                var teamA = await _teamRepository.GetById(match.TeamA);
+
+                var teamB = await _teamRepository.GetById(match.TeamB);
+
+                var matchDTO = _mapper.Map<MatchResponseDTO>(match);
+
+                matchDTO.TeamAName = teamA.Name;
+                matchDTO.TeamBName = teamB.Name;
+
+                results.Add(matchDTO);
+            }
+
             return new BaseResponse
             {
                 StatusCode = 200,
                 Message = "",
                 IsSuccess = true,
-                Data = _mapper.Map<List<MatchDTO>>(matches)
+                Data = results
             };
         }
 
