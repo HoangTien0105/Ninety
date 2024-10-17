@@ -22,6 +22,7 @@ namespace Ninety.Models.DTOs
 
         public int? BpointSet3 { get; set; }
 
-        public int MatchId { get; set; }
+        //public int MatchId { get; set; }
+        public MatchDTO Match { get; set; }
     }
 }

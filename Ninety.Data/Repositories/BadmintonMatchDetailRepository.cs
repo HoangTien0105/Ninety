@@ -48,7 +48,7 @@ namespace Ninety.Data.Repositories
 
         public async Task<BadmintonMatchDetail> GetById(int id)
         {
-            return await _context.BadmintonMatchDetails.FirstOrDefaultAsync(e => e.Id == id);
+            return await _context.BadmintonMatchDetails.Include(c => c.Match).FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task AddMatchDetails(List<BadmintonMatchDetail> matchDetails)

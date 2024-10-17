@@ -269,12 +269,12 @@ namespace Ninety.Business.Services
                     };
                 }
 
-                if (tournament.Format.ToLower().Trim() != "tournament")
+                if (tournament.Format.ToLower().Trim() != "knockout")
                 {
                     return new BaseResponse
                     {
                         StatusCode = 400,
-                        Message = "Tournament format is not 'tournament'",
+                        Message = "Tournament format is not 'knockout'",
                         IsSuccess = false,
                         Data = null
                     };
