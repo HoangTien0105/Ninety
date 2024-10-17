@@ -213,6 +213,8 @@ namespace Ninety.Business.Services
                 SlotLeft = requestDTO.NumOfParticipants,
                 StartDate = requestDTO.StartDate,
                 EndDate = requestDTO.EndDate,
+                IsRegister = true,
+                CreateMatch = false,
                 Fee = requestDTO.Fee,
                 Place = requestDTO.Place,
                 SportId = requestDTO.SportId,
