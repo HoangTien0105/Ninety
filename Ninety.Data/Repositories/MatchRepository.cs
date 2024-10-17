@@ -148,6 +148,56 @@ namespace Ninety.Data.Repositories
             }
         }
 
+        public async Task CreateMatchesWithTransactionAndNoRanking(List<Match> matches, List<Team> teams, int tournamentId)
+        {
+            using (var transaction = await _context.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // Add all matches
+                    foreach (var match in matches)
+                    {
+                        await _context.Matchs.AddAsync(match);
+                    }
+
+                    // Save changes to get match IDs
+                    await _context.SaveChangesAsync();
+
+                    // Add details for each match using the generated match IDs
+                    foreach (var match in matches)
+                    {
+                        BadmintonMatchDetail detail = new BadmintonMatchDetail
+                        {
+                            ApointSet1 = 0,
+                            BpointSet1 = 0,
+                            ApointSet2 = 0,
+                            BpointSet2 = 0,
+                            MatchId = match.Id
+                        };
+
+                        await _context.BadmintonMatchDetails.AddAsync(detail);
+                    }
+
+                    // Save all changes
+                    await _context.SaveChangesAsync();
+
+                    // Update tournament to indicate matches have been created
+                    var tournament = await _context.Tournaments.FirstOrDefaultAsync(e => e.Id == tournamentId);
+                    tournament.CreateMatch = false;
+                    await _context.SaveChangesAsync();
+
+                    // Commit transaction if everything is successful
+                    await transaction.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    // Rollback the transaction if any error occurs
+                    await transaction.RollbackAsync();
+                    throw new Exception("An error occurred while creating matches and details", ex);
+                }
+            }
+        }
+
         public async Task UpdateScoreAndRankingWithTransaction(int matchId, int winningTeamId, int tournamentId)
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())
