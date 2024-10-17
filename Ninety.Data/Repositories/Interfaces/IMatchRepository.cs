@@ -17,5 +17,6 @@ namespace Ninety.Data.Repositories.Interfaces
         Task<Match> Create(Match match);
         Task<Match> Update(Match match);
         Task CreateMatchesWithTransaction(List<Match> matches, List<Team> teams, int tournamentId);
+        Task CreateMatchesWithTransactionAndNoRanking(List<Match> matches, List<Team> teams, int tournamentId);
     }
 }

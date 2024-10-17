@@ -241,6 +241,142 @@ namespace Ninety.Business.Services
             }
         }
 
+        public async Task<BaseResponse> CreateMatchesForTournament(int tournamentId)
+        {
+            try
+            {
+                var tournament = await _tournamentRepository.GetById(tournamentId);
+
+                if (tournament == null)
+                {
+                    return new BaseResponse
+                    {
+                        StatusCode = 404,
+                        Message = "Tournament not found",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                }
+
+                if (tournament.CreateMatch == true)
+                {
+                    return new BaseResponse
+                    {
+                        StatusCode = 404,
+                        Message = "Matches already created",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                }
+
+                if (tournament.Format.ToLower().Trim() != "tournament")
+                {
+                    return new BaseResponse
+                    {
+                        StatusCode = 400,
+                        Message = "Tournament format is not 'tournament'",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                }
+
+                var teams = await _teamRepository.GetByTournamentId(tournamentId);
+
+                if (teams == null || teams.Count <= 2)
+                {
+                    return new BaseResponse
+                    {
+                        StatusCode = 400,
+                        Message = "Not enough teams to create matches",
+                        IsSuccess = false,
+                        Data = null
+                    };
+                }
+
+                // Lấy số lượng đội
+                int teamCount = teams.Count;
+
+                // Xác định số vòng đấu cần thiết (log2(teamCount) làm tròn lên)
+                int numberOfRounds = (int)Math.Ceiling(Math.Log2(teamCount));
+
+                // Tính số lượng "byes" nếu số đội không phải là lũy thừa của 2
+                int totalMatchesFirstRound = (int)Math.Pow(2, numberOfRounds);
+                int byes = totalMatchesFirstRound - teamCount; // Đội không đấu ở vòng đầu
+
+                List<Match> matches = new List<Match>();
+                DateTime currentRoundDate = tournament.StartDate;
+
+                // Danh sách các đội (chúng ta sẽ ghép các cặp thi đấu)
+                var teamList = teams.ToList();
+                Random random = new Random();
+                teamList = teamList.OrderBy(x => random.Next()).ToList();  // Shuffle danh sách đội
+
+                int matchIdCounter = 1;
+
+                // Vòng đầu tiên (có thể có "bye" cho một số đội)
+                for (int i = 0; i < teamList.Count; i += 2)
+                {
+                    Match match = new Match
+                    {
+                        TeamA = teamList[i].Id,
+                        TeamB = (i + 1 < teamList.Count) ? teamList[i + 1].Id : 0, // Nếu có đội lẻ, TeamB = null (đội có "bye")
+                        TotalResult = "Not happened yet",
+                        Date = currentRoundDate,
+                        TournamentId = tournamentId,
+                        Round = "1",
+                        Bracket = $"Round 1 - Match {matchIdCounter++}"  // Gán tên cho từng trận đấu
+                    };
+
+                    matches.Add(match);
+                }
+
+                // Các vòng tiếp theo
+                for (int round = 2; round <= numberOfRounds; round++)
+                {
+                    currentRoundDate = currentRoundDate.AddDays(7);  // Mỗi vòng cách nhau 1 tuần
+                    int previousRoundMatches = matches.Count(m => m.Round == (round - 1).ToString());
+
+                    for (int i = 0; i < previousRoundMatches / 2; i++)
+                    {
+                        Match match = new Match
+                        {
+                            TeamA = 0,  // Đội thắng từ vòng trước sẽ được gán sau
+                            TeamB = 0,  // Đội thắng từ vòng trước sẽ được gán sau
+                            TotalResult = "Not happened yet",
+                            Date = currentRoundDate,
+                            TournamentId = tournamentId,
+                            Round = round.ToString(),
+                            Bracket = $"Round {round} - Match {matchIdCounter++}"
+                        };
+
+                        matches.Add(match);
+                    }
+                }
+
+                // Lưu tất cả các trận đấu vào database
+                await _matchRepository.CreateMatchesWithTransactionAndNoRanking(matches, teamList, tournamentId);
+
+                return new BaseResponse
+                {
+                    StatusCode = 200,
+                    Message = "Tournament matches created successfully!",
+                    IsSuccess = true,
+                    Data = null
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 500,
+                    Message = $"An error occurred: {ex.Message}",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+        }
+
+
         public async Task<BaseResponse> GetAll()
         {
             var matches = await _matchRepository.GetAll();
