@@ -57,6 +57,19 @@ namespace Ninety.Controllers
             var sports = await _matchService.GetByTournamentId(id);
 
             return StatusCode(sports.StatusCode, sports);
+        }        
+        
+        /// <summary>
+        /// Get all match of a tournament bracket
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("get-bracket/{id}")]
+        public async Task<IActionResult> GetTournamentBrackets(int id)
+        {
+            var sports = await _matchService.GetByTournamentId(id);
+
+            return StatusCode(sports.StatusCode, sports);
         }
 
         /// <summary>
@@ -90,12 +103,25 @@ namespace Ninety.Controllers
         /// <summary>
         /// Create match for league event
         /// </summary>
-        /// <param name="createMatchDTO"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
         [HttpPost("{id}")]
         public async Task<IActionResult> CreateMatchForLeague(int id)
         {
             var sports = await _matchService.CreateMatchesForLeague(id);
+
+            return StatusCode(sports.StatusCode, sports);
+        }
+
+        /// <summary>
+        /// Create match for league event
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost("bracket/{id}")]
+        public async Task<IActionResult> CreateMatchForTournament(int id)
+        {
+            var sports = await _matchService.CreateMatchesForTournament(id);
 
             return StatusCode(sports.StatusCode, sports);
         }
