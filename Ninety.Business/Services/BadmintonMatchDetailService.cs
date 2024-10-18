@@ -18,6 +18,7 @@ namespace Ninety.Business.Services
     {
         private readonly IBadmintonMatchDetailRepository _badmintonMatchDetailRepository;
         private readonly IMatchRepository _matchRepository;
+        private readonly ITournamentRepository _tournamentRepository;
         private readonly IMapper _mapper;
 
         public BadmintonMatchDetailService(IBadmintonMatchDetailRepository badmintonMatchDetailRepository,
@@ -27,6 +28,7 @@ namespace Ninety.Business.Services
         {
             _badmintonMatchDetailRepository = badmintonMatchDetailRepository;
             _matchRepository = matchRepository;
+            _tournamentRepository = tournamentRepository;
             _mapper = mapper;
         }
 
@@ -96,6 +98,19 @@ namespace Ninety.Business.Services
                 };
             }
 
+            var tournament = await _tournamentRepository.GetById(match.TournamentId);
+
+            if (tournament == null)
+            {
+                return new BaseResponse
+                {
+                    StatusCode = 404,
+                    Message = "Tournament not found",
+                    IsSuccess = false,
+                    Data = null
+                };
+            }
+
             if (updateBadmintonScoreDTO.ApointSet1 < 0 || updateBadmintonScoreDTO.BpointSet1 < 0 ||
                 updateBadmintonScoreDTO.ApointSet2 < 0 || updateBadmintonScoreDTO.BpointSet2 < 0 ||
                 (updateBadmintonScoreDTO.ApointSet3.HasValue && updateBadmintonScoreDTO.ApointSet3 < 0) ||
@@ -140,7 +155,45 @@ namespace Ninety.Business.Services
             if (teamAWins == 2 || teamBWins == 2)
             {
                 var winningTeamId = teamAWins == 2 ? match.TeamA : match.TeamB;
-                await _matchRepository.UpdateScoreAndRankingWithTransaction(match.Id, winningTeamId, match.TournamentId);
+
+                match.WinningTeam = winningTeamId;
+
+                if (tournament.Format.ToLower().Trim() == "league")
+                {
+                    await _matchRepository.UpdateScoreAndRankingWithTransaction(match.Id, winningTeamId, match.TournamentId);
+                }
+                else if (tournament.Format.ToLower().Trim() == "knockout")
+                {
+                    int currentRound = int.Parse(match.Round);
+                    int nextRound = currentRound + 1;
+
+                    // Lấy tất cả các trận đấu trong vòng tiếp theo (vòng 2)
+                    var nextRoundMatches = await _matchRepository.GetMatchesByRoundAndTournament(nextRound.ToString(), match.TournamentId);
+
+                    // Xác định xem trận đấu này là Match số mấy trong vòng hiện tại
+                    string[] bracketParts = match.Bracket.Split('-');
+                    int matchNumber = int.Parse(bracketParts[1].Trim().Replace("Match", "").Trim());
+                    int totalMatchesThisRound = nextRoundMatches.Count;  // Tổng số trận trong vòng tiếp theo
+
+                    // Xác định vị trí của trận đấu tiếp theo
+                    // Match số mấy của vòng tiếp theo (số vòng tiếp theo sẽ lớn hơn vòng hiện tại)
+                    int nextMatchNumber = matchNumber + totalMatchesThisRound;
+                    var nextMatch = nextRoundMatches.FirstOrDefault(m => m.Bracket.Contains($"Match {nextMatchNumber}"));
+
+                    if (nextMatch != null)
+                    {
+                        if (matchNumber % 2 == 1) // Match lẻ (1, 3, 5,...) sẽ ghép vào Team A
+                        {
+                            nextMatch.TeamA = winningTeamId;
+                        }
+                        else // Match chẵn (2, 4, 6,...) sẽ ghép vào Team B
+                        {
+                            nextMatch.TeamB = winningTeamId;
+                        }
+
+                        await _matchRepository.Update(nextMatch);
+                    }
+                }
             }
 
             await _matchRepository.Update(match);
