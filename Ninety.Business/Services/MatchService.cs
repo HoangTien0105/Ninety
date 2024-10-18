@@ -494,10 +494,27 @@ namespace Ninety.Business.Services
 
                 var teamB = await _teamRepository.GetById(match.TeamB);
 
+                
+
                 var matchDTO = _mapper.Map<MatchResponseDTO>(match);
 
-                matchDTO.TeamAName = teamA.Name;
-                matchDTO.TeamBName = teamB.Name;
+                if (teamA == null)
+                {
+                    matchDTO.TeamAName = "";
+                }
+                else
+                {
+                    matchDTO.TeamAName = teamA.Name;
+                }
+
+                if (teamB == null)
+                {
+                    matchDTO.TeamBName = "";
+                }
+                else
+                {
+                    matchDTO.TeamBName = teamB.Name;
+                }
 
                 results.Add(matchDTO);
             }

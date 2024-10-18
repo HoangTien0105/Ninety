@@ -114,7 +114,7 @@ namespace Ninety.Controllers
         }
 
         /// <summary>
-        /// Create match for league event
+        /// Create match for knockout event
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
