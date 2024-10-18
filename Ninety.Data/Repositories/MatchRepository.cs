@@ -183,7 +183,7 @@ namespace Ninety.Data.Repositories
 
                     // Update tournament to indicate matches have been created
                     var tournament = await _context.Tournaments.FirstOrDefaultAsync(e => e.Id == tournamentId);
-                    tournament.CreateMatch = false;
+                    tournament.CreateMatch = true;
                     await _context.SaveChangesAsync();
 
                     // Commit transaction if everything is successful
@@ -260,5 +260,15 @@ namespace Ninety.Data.Repositories
         {
             return await _context.Matchs.Where(e => e.TournamentId == tournamentId && (e.TeamA == teamId || e.TeamB == teamId)).ToListAsync();
         }
+
+        public async Task<List<Match>> GetMatchesByRoundAndTournament(string round, int tournamentId)
+        {
+            // Truy xuất danh sách các trận đấu dựa trên vòng đấu và ID của giải đấu
+            return await _context.Matchs
+                .Where(m => m.Round == round && m.TournamentId == tournamentId)
+                .ToListAsync();
+        }
+
+
     }
 }
