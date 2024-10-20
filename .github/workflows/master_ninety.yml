@@ -26,11 +26,20 @@ jobs:
       - name: Publish with dotnet
         run: dotnet publish -c Release -o D:/a/Ninety/Ninety/publish
 
+      - name: Verify publish directory exists
+        run: |
+          if [ -d "D:/a/Ninety/Ninety/publish" ]; then 
+            echo "Publish directory exists"; 
+          else 
+            echo "Publish directory is missing"; 
+            exit 1;
+          fi
+
       - name: Upload published app for deployment
         uses: actions/upload-artifact@v4
         with:
           name: published-app
-          path: ./publish
+          path: D:/a/Ninety/Ninety/publish
 
   deploy:
     runs-on: windows-latest
@@ -57,7 +66,6 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_0A259929115F4AB682DEAB3CA73B6C96 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A6CF8C278DDA472CA68248217ECFC365 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A53B78D5AF6C430DBE2248803239658E }}
-    
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -65,4 +73,4 @@ jobs:
         with:
           app-name: 'Ninety'
           slot-name: 'Production'
-          package: './publish/published-app.zip'
+          package: D:/a/Ninety/Ninety/publish/published-app.zip
