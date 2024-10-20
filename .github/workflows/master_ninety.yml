@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy ASP.Net Core app to Azure Web App - Ninety
 
 on:
@@ -21,16 +18,13 @@ jobs:
         with:
           dotnet-version: '8.x'
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
-
-      - name: Build with dotnet
+      - name: Publish with dotnet
         run: dotnet publish -c Release -o ./publish
 
-      - name: Upload artifact for deployment job
+      - name: Upload published app for deployment
         uses: actions/upload-artifact@v4
         with:
-          name: .net-app
+          name: published-app
           path: ./publish
 
   deploy:
@@ -40,20 +34,20 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: write
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: .net-app
-      
+          name: published-app
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_0A259929115F4AB682DEAB3CA73B6C96 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A6CF8C278DDA472CA68248217ECFC365 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A53B78D5AF6C430DBE2248803239658E }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -62,4 +56,3 @@ jobs:
           app-name: 'Ninety'
           slot-name: 'Production'
           package: ./publish
-          
