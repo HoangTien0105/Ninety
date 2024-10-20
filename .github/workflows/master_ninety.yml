@@ -72,4 +72,4 @@ jobs:
         with:
           app-name: 'Ninety'
           slot-name: 'Production'
-          package: D:\a\Ninety\Ninety
+          package: D:\a\Ninety\Ninety    
