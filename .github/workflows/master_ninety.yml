@@ -44,7 +44,7 @@ jobs:
           name: published-app
 
       - name: Login to Azure 
-        uses: azure/login@v2
+        uses: azure/login@v1
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_0A259929115F4AB682DEAB3CA73B6C96 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A6CF8C278DDA472CA68248217ECFC365 }}
