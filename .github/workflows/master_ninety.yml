@@ -28,12 +28,12 @@ jobs:
 
       - name: Verify publish directory exists
         run: |
-          if [ -d "D:/a/Ninety/Ninety/publish" ]; then 
-            echo "Publish directory exists"; 
-          else 
-            echo "Publish directory is missing"; 
-            exit 1;
-          fi
+          if (Test-Path -Path "D:/a/Ninety/Ninety/publish") {
+            Write-Host "Publish directory exists."
+          } else {
+            Write-Error "Publish directory does not exist!"
+          }
+          shell: pwsh
 
       - name: Upload published app for deployment
         uses: actions/upload-artifact@v4
