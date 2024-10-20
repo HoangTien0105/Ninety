@@ -32,6 +32,7 @@ jobs:
               Write-Host "Publish directory exists."
             } else {
               throw "Publish directory does not exist!"
+              }
 
       - name: Upload published app for deployment
         uses: actions/upload-artifact@v4
