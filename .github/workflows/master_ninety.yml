@@ -43,11 +43,6 @@ jobs:
         with:
           name: published-app
 
-      - name: Install Azure CLI
-        run: |
-          pwsh -Command "Install-Module -Name Az -AllowClobber -Force -Scope CurrentUser"
-          pwsh -Command "Import-Module Az"
-
       - name: Login to Azure 
         uses: azure/login@v2
         with:
